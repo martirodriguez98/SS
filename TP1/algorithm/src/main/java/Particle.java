@@ -34,13 +34,29 @@ public class Particle {
         this.position = position;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
-        return "Particle{" +
-                "radio=" + radio +
-                ", property=" + property +
-                ", id=" + id +
-                ", position=" + position +
-                '}';
+        return "" + id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Particle particle)) return false;
+
+        return id == particle.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
     }
 }

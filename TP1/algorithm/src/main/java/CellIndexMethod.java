@@ -1,17 +1,68 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
 
 public class CellIndexMethod {
+    final static String outputFilePath = "TP1/Algorithm/src/main/resources/Results/output.txt";
 
-    public static File cellIndexMethod(List<Particle> particles, int M, double r_c) {
+    public static void cellIndexMethod(List<Particle> particles, int M, double r_c) {
+        HashMap<Particle, List<Particle>> neighbours = new HashMap<>();
+        for(int i = 0 ; i < particles.size() ; i++){
+            Particle pi = particles.get(i);
+            neighbours.putIfAbsent(pi, new LinkedList<>());
+            for(int j = i+1 ; j < particles.size() ; j++){
+                Particle pj = particles.get(j);
+                neighbours.putIfAbsent(pj, new LinkedList<>());
+                if(isNeighbour(pi, pj, r_c) ){
+                    neighbours.get(pi).add(pj);
+                    neighbours.get(pj).add(pi);
+                }
+            }
+        }
 
+        // new file object
+        File file = new File(outputFilePath);
 
-        File output = new File("TP1/src/main/resources/ArchivosEjemplo/output.txt");
+        BufferedWriter bf = null;
 
+        try {
 
-        return output;
+            // create new BufferedWriter for the output file
+            bf = new BufferedWriter(new FileWriter(file));
+
+            // iterate map entries
+            for (Map.Entry<Particle, List<Particle>> entry : neighbours.entrySet()) {
+                // put key and value separated by a colon
+                bf.write(entry.getKey().getId() + "\t"
+                        + entry.getValue());
+                // new line
+                bf.newLine();
+            }
+
+            bf.flush();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                // always close the writer
+                assert bf != null;
+                bf.close();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
+
+    public static boolean isNeighbour(Particle p1, Particle p2, double rc){
+        Position pp1 = p1.getPosition();
+        Position pp2 = p2.getPosition();
+        double distance = Math.sqrt(Math.pow(pp1.getX()-pp2.getX(),2) + Math.pow(pp1.getY()-pp2.getY(),2));
+        return distance - p1.getRadio() - p2.getRadio() <= rc;
+    }
+
+
 
     public static void main(String[] args) {
         //todo check if parameters are ok.
