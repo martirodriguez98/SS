@@ -1,10 +1,10 @@
 public class Particle {
     private double radio;
     private double property;
-    private long id;
+    private int id;
     private Position position; //if we need the time in the future, we save it as HashMap<time,position>
 
-    public Particle(double radio, double property, long id) {
+    public Particle(double radio, double property, int id) {
         this.id = id;
         this.radio = radio;
         this.property = property;
@@ -34,11 +34,11 @@ public class Particle {
         this.position = position;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
