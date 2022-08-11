@@ -1,11 +1,20 @@
+import utils.AlgorithmTime;
+
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 public class CellIndexMethod {
     final static String outputFilePath = "TP1/Algorithm/src/main/resources/Results/output.txt";
 
-    public static void cellIndexMethod(List<Particle> particles,int L, int M, double rc, boolean periodicGrid) {
+    public static LocalTime cellIndexMethod(List<Particle> particles,int L, int M, double rc, boolean periodicGrid) {
         Grid grid = new Grid(particles, periodicGrid, M, L);
+
+        final AlgorithmTime algorithmTime = new AlgorithmTime();
+
+        algorithmTime.setStart(LocalDateTime.now());
+
         List<List<Cell>> cells = grid.getGrid();
 
         HashMap<Integer, Set<Particle>> neighbours = new HashMap<>();
@@ -24,6 +33,15 @@ public class CellIndexMethod {
             }
         }
 
+        algorithmTime.setEnd(LocalDateTime.now());
+        LocalTime totalTime = algorithmTime.getTotalTime();
+        System.out.println("Execution time: " + totalTime);
+        exportResults(neighbours);
+        return totalTime;
+
+    }
+
+    public static void exportResults(HashMap<Integer, Set<Particle>> neighbours){
         // new file object
         File file = new File(outputFilePath);
 
@@ -137,8 +155,34 @@ public class CellIndexMethod {
 
     }
 
+    public static LocalTime bruteForceMethod(List<Particle> particles, int L, int M, double rc, boolean periodicGrid){
+        AlgorithmTime algorithmTime = new AlgorithmTime();
+        algorithmTime.setStart(LocalDateTime.now());
+        HashMap<Particle, List<Particle>> neighbours = new HashMap<>();
+        for(int i = 0 ; i < particles.size() ; i++){
+            Particle pi = particles.get(i);
+            neighbours.putIfAbsent(pi, new LinkedList<>());
+            for(int j = i+1 ; j < particles.size() ; j++){
+                Particle pj = particles.get(j);
+                neighbours.putIfAbsent(pj, new LinkedList<>());
+                if(isNeighbour(pi, pj, rc) ){
+                    neighbours.get(pi).add(pj);
+                    neighbours.get(pj).add(pi);
+                }
+            }
+        }
+        algorithmTime.setEnd(LocalDateTime.now());
+        LocalTime totalTime = algorithmTime.getTotalTime();
+        System.out.println("Execution time: " + totalTime);
+        return totalTime;
+    }
 
-
+    public static boolean isNeighbour(Particle p1, Particle p2, double rc){
+        Position pp1 = p1.getPosition();
+        Position pp2 = p2.getPosition();
+        double distance = Math.sqrt(Math.pow(pp1.getX()-pp2.getX(),2) + Math.pow(pp1.getY()-pp2.getY(),2));
+        return distance - p1.getRadio() - p2.getRadio() <= rc;
+    }
 
     public static void main(String[] args) {
         //todo check if parameters are ok.
@@ -202,6 +246,6 @@ public class CellIndexMethod {
         int M = (int) Math.floor(L/(rc + 2 * max_radio));
 
         cellIndexMethod(particles,L,M, rc, periodicGrid);
-
+//        bruteForceMethod(particles, L, M, rc, periodicGrid);
     }
 }

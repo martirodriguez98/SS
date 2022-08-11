@@ -16,7 +16,7 @@ public class Grid {
         buildGrid(this.l/(double) m);
         fillGrid(particles, this.l/(double) m);
         setNeighbours();
-        
+
     }
 
     public void buildGrid(double inc){
