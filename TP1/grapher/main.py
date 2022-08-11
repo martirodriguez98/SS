@@ -1,5 +1,8 @@
 import sys
 
+from grapher.parser import parse_particles, add_neighbours
+from grapher.plot import plot
+
 if __name__ == '__main__':
     argv = sys.argv
     if len(argv) > 3:
@@ -9,18 +12,10 @@ if __name__ == '__main__':
     else:
         raise ValueError(f'Please provide all files.')
 
-    try:
-        static_info = open(static_file, 'r')
-        dynamic_file = open(dynamic_file, 'r')
-        results = open(results_file, 'r')
-        lines = results.readlines()
+    particles = parse_particles(static_file, dynamic_file)
 
+    add_neighbours(particles, results_file)
+    for i in range(len(particles)):
+        plot(particles,i+1)
 
-
-
-        for line in lines:
-            print(line)
-
-    except FileNotFoundError:
-        raise ValueError(f'{results_file} file not found.')
 

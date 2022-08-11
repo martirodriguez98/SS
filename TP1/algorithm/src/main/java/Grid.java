@@ -16,12 +16,7 @@ public class Grid {
         buildGrid(this.l/(double) m);
         fillGrid(particles, this.l/(double) m);
         setNeighbours();
-
-        for(List<Cell> list : grid){
-            for (Cell cell : list){
-                System.out.println(cell);
-            }
-        }
+        
     }
 
     public void buildGrid(double inc){

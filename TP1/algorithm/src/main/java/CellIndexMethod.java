@@ -24,10 +24,6 @@ public class CellIndexMethod {
             }
         }
 
-        for (Map.Entry<Integer, Set<Particle>> entry : neighbours.entrySet()){
-            System.out.println(entry.toString());
-        }
-
         // new file object
         File file = new File(outputFilePath);
 
