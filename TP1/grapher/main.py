@@ -1,7 +1,7 @@
 import sys
 
-from grapher.parser import parse_particles, add_neighbours
-from grapher.plot import plot
+from grapher.parser import parse_particles, add_neighbours, parse_time
+from grapher.plot import plot, plot_time
 
 if __name__ == '__main__':
     argv = sys.argv
@@ -15,7 +15,24 @@ if __name__ == '__main__':
     particles = parse_particles(static_file, dynamic_file)
 
     add_neighbours(particles, results_file)
-    for i in range(len(particles)):
-        plot(particles,i+1)
+
+    #particles plots
+
+    # for i in range(len(particles)):
+    #     plot(particles,i+1)
+
+    # for i in range(3):
+    #     plot(particles,i+1)
+
+
+    #time plots
+    times_file = "../algorithm/src/main/resources/Results/times.txt"
+    timesBF_file = "../algorithm/src/main/resources/Results/timesBF.txt"
+    time = parse_time(times_file)
+    timeBF = parse_time(timesBF_file)
+    plot_time(time, "CellIndexMethod")
+    plot_time(timeBF, "Brute force")
+
+
 
 

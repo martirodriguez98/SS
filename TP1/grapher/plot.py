@@ -22,3 +22,20 @@ def plot(particles, id):
 
     plt.show()
     # plt.savefig(f'plots/{id}.png')
+
+def plot_time(time, mode):
+    plt.style.use('dark_background')
+    fig = plt.figure()
+    ax = fig.add_subplot()
+    new_time = []
+    for t in time:
+        new_time.append(float(t.replace('\n','')))
+
+    n_list = list(reversed(list(range(1,len(time)+1))))
+
+    new_list = zip(*sorted(zip(n_list, new_time)))
+    plt.plot(*new_list)
+    plt.xlabel("Amount of particles (N)")
+    plt.ylabel("Time (miliseconds)")
+    plt.title("Relation execution time / amount of particles - " + mode)
+    plt.show()

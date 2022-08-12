@@ -47,3 +47,14 @@ def add_neighbours(particles, results_file):
 
     except FileNotFoundError:
         raise ValueError(f'File {results_file} not found.')
+
+def parse_time(time_file):
+    try:
+        time_info = open(time_file, 'r')
+        lines = time_info.readlines()
+        time = []
+        for line in lines:
+            time.append(line)
+        return time
+    except FileNotFoundError:
+        raise ValueError(f'File {time_file} not found.')
