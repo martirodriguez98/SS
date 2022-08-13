@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 
 def plot(particles, id):
-
+    rc = 6
     plt.style.use('dark_background')
     nb = particles[id - 1].neighbours
     fig = plt.figure()
@@ -13,12 +13,21 @@ def plot(particles, id):
 
     for p in particles:
         if p.id == id:
-            ax.scatter(float(p.position.x) , float(p.position.y) , color='#ff1493')
+            ax.scatter(float(p.position.x) , float(p.position.y) ,s=4 * pow(float(p.radio),2), color='#ff1493')
             ax.annotate( p.id, (float(p.position.x) , float(p.position.y)))
+            circle = plt.Circle((float(p.position.x) , float(p.position.y)), rc + float(p.radio), color='pink', fill=False, linewidth=1)
+            ax.add_patch(circle)
         elif p in nb:
-            ax.scatter(float(p.position.x) , float(p.position.y), color='#91db57')
+            ax.scatter(float(p.position.x) , float(p.position.y), s=4 * pow(float(p.radio),2), color='#91db57')
         else:
-            ax.scatter(float(p.position.x), float(p.position.y), color='white')
+            ax.scatter(float(p.position.x), float(p.position.y), s=4 * pow(float(p.radio),2), color='white')
+
+    plt.axis("equal")
+    ax.set_aspect('equal', adjustable='box')
+
+    # plt.xlim(0,100)
+    # plt.ylim(0,100)
+
 
     plt.show()
     # plt.savefig(f'plots/{id}.png')

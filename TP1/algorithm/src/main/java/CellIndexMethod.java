@@ -129,15 +129,14 @@ public class CellIndexMethod {
         if (BRCell != null && !BRCell.getParticles().isEmpty()) {
             for (Particle otherP : BRCell.getParticles()) {
                 Position otherPos = otherP.getPosition();
-
                 if (periodicGrid && M != 1) {
                     if (otherPos.getY() > pos.getY()) {
                         otherPos = new Position(otherPos.getX() + (otherPos.getX() < pos.getX() ? L : 0), otherPos.getY() - L);
                     } else if (otherPos.getX() < pos.getX()) {
                         otherPos = new Position(otherPos.getX() + L, otherPos.getY());
                     }
-                    addNeighbourIfClose(p, otherP, pos, otherPos, rc, neighbours);
                 }
+                addNeighbourIfClose(p, otherP, pos, otherPos, rc, neighbours);
             }
         }
 
@@ -158,20 +157,21 @@ public class CellIndexMethod {
     public static int bruteForceMethod(List<Particle> particles, int L, int M, double rc, boolean periodicGrid) {
         AlgorithmTime algorithmTime = new AlgorithmTime();
         algorithmTime.setStart(LocalDateTime.now());
-        HashMap<Particle, List<Particle>> neighbours = new HashMap<>();
+        HashMap<Integer, Set<Particle>> neighbours = new HashMap<>();
         for (int i = 0; i < particles.size(); i++) {
             Particle pi = particles.get(i);
-            neighbours.putIfAbsent(pi, new LinkedList<>());
+            neighbours.putIfAbsent(pi.getId(), new HashSet<>());
             for (int j = i + 1; j < particles.size(); j++) {
                 Particle pj = particles.get(j);
-                neighbours.putIfAbsent(pj, new LinkedList<>());
+                neighbours.putIfAbsent(pj.getId(), new HashSet<>());
                 if (isNeighbour(pi, pj, rc)) {
-                    neighbours.get(pi).add(pj);
-                    neighbours.get(pj).add(pi);
+                    neighbours.get(pi.getId()).add(pj);
+                    neighbours.get(pj.getId()).add(pi);
                 }
             }
         }
         algorithmTime.setEnd(LocalDateTime.now());
+        exportResults(neighbours);
         return algorithmTime.getTotalTime().getNano() / 1000000;
     }
 
@@ -182,78 +182,12 @@ public class CellIndexMethod {
         return distance - p1.getRadio() - p2.getRadio() <= rc;
     }
 
-    public static void main(String[] args) {
-        //todo check if parameters are ok.
-        File static_file = new File(args[0]);
-        int N = 0;
-        int L = 0;
-        List<Particle> particles = null;
-        try {
-            Scanner myReader = new Scanner(static_file);
-            int index = 0;
-            particles = new LinkedList<>();
-            while (myReader.hasNextLine()) {
-                if (index == 0) {
-                    N = Integer.parseInt(myReader.nextLine());
-                } else if (index == 1) {
-                    L = Integer.parseInt(myReader.nextLine());
-                } else {
-                    String data = myReader.nextLine();
-                    String[] tokens = data.split("\s+");
-                    Particle p = new Particle(Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1]), index - 1);
-                    particles.add(p);
-                }
-                index++;
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-
-        if (particles != null) {
-            File dynamic_file = new File(args[1]);
-            try {
-                int index = 0;
-                Scanner myReader = new Scanner(dynamic_file);
-                while (myReader.hasNextLine()) {
-                    String data = myReader.nextLine();
-                    String[] tokens = data.split("\s+");
-                    if (tokens.length == 1) {
-                        //time
-                        index = 0;
-                    } else {
-                        particles.get(index - 1).setPosition(new Position(Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1])));
-                    }
-                    index++;
-
-                }
-                myReader.close();
-            } catch (FileNotFoundException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
-        }
-
-        double rc = Double.parseDouble(args[2]);
-        boolean periodicGrid = Boolean.parseBoolean(args[4]);
-
-        assert particles != null;
-        double max_radio = particles.stream().max(Comparator.comparing(Particle::getRadio)).get().getRadio();
-
-        int M = (int) Math.floor(L / (rc + 2 * max_radio));
-
-//        run_neighbours(particles,N, L, M, rc, periodicGrid);
-
-        run_statistics(particles,N, L, M, rc, periodicGrid);
-
-    }
-
     public static void run_neighbours(List<Particle> particles, int N, int L,int M, double rc, boolean periodicGrid){
         HashMap<Integer, List<Integer>> executionTimes = new HashMap<>();
         List<Particle> particlesCopy = new LinkedList<>(particles);
 
         cellIndexMethod(particlesCopy, L, M, rc, periodicGrid);
+//        bruteForceMethod(particlesCopy,L, M, rc, periodicGrid);
     }
 
     public static void run_statistics(List<Particle> particles, int N, int L, int M, double rc, boolean periodicGrid){
@@ -318,5 +252,70 @@ public class CellIndexMethod {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void main(String[] args) {
+        //todo check if parameters are ok.
+        File static_file = new File(args[0]);
+        int N = 0;
+        int L = 0;
+        List<Particle> particles = null;
+        try {
+            Scanner myReader = new Scanner(static_file);
+            int index = 0;
+            particles = new LinkedList<>();
+            while (myReader.hasNextLine()) {
+                if (index == 0) {
+                    N = Integer.parseInt(myReader.nextLine());
+                } else if (index == 1) {
+                    L = Integer.parseInt(myReader.nextLine());
+                } else {
+                    String data = myReader.nextLine();
+                    String[] tokens = data.split("\s+");
+                    Particle p = new Particle(Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1]), index - 1);
+                    particles.add(p);
+                }
+                index++;
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+        if (particles != null) {
+            File dynamic_file = new File(args[1]);
+            try {
+                int index = 0;
+                Scanner myReader = new Scanner(dynamic_file);
+                while (myReader.hasNextLine()) {
+                    String data = myReader.nextLine();
+                    String[] tokens = data.split("\s+");
+                    if (tokens.length == 1) {
+                        //time
+                        index = 0;
+                    } else {
+                        particles.get(index - 1).setPosition(new Position(Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1])));
+                    }
+                    index++;
+
+                }
+                myReader.close();
+            } catch (FileNotFoundException e) {
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+            }
+        }
+
+        double rc = Double.parseDouble(args[2]);
+        boolean periodicGrid = Boolean.parseBoolean(args[3]);
+
+        assert particles != null;
+        double max_radio = particles.stream().max(Comparator.comparing(Particle::getRadio)).get().getRadio();
+        int M = (int) Math.floor(L / (rc + 2 * max_radio));
+        run_neighbours(particles,N, L, M, rc, periodicGrid);
+
+//        run_statistics(particles,N, L, M, rc, periodicGrid);
+
     }
 }

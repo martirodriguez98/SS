@@ -41,8 +41,8 @@ def add_neighbours(particles, results_file):
             for i in range(len(tokens)):
                 if i != 0:
                     t = tokens[i].replace('[', '').replace(',', '').replace(']', '')
-
-                    neighbours.append(particles[int(t) - 1])
+                    if t != '':
+                        neighbours.append(particles[int(t) - 1])
             particles[int(tokens[0]) - 1].set_neighbours(neighbours)
 
     except FileNotFoundError:

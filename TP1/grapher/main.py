@@ -21,17 +21,20 @@ if __name__ == '__main__':
     # for i in range(len(particles)):
     #     plot(particles,i+1)
 
-    # for i in range(3):
-    #     plot(particles,i+1)
+    for i in range(1,10):
+        plot(particles,i)
 
+    plot(particles, 4)
+    # plot(particles, 739)
+    # plot(particles, 936)
 
     #time plots
-    times_file = "../algorithm/src/main/resources/Results/times.txt"
-    timesBF_file = "../algorithm/src/main/resources/Results/timesBF.txt"
-    time = parse_time(times_file)
-    timeBF = parse_time(timesBF_file)
-    plot_time(time, "CellIndexMethod")
-    plot_time(timeBF, "Brute force")
+    # times_file = "../algorithm/src/main/resources/Results/times.txt"
+    # timesBF_file = "../algorithm/src/main/resources/Results/timesBF.txt"
+    # time = parse_time(times_file)
+    # timeBF = parse_time(timesBF_file)
+    # plot_time(time, "CellIndexMethod")
+    # plot_time(timeBF, "Brute force")
 
 
 
