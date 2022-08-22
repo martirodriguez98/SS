@@ -1,4 +1,4 @@
-package grid_utils;
+package utils;
 
 public class Particle {
     private double radio;
@@ -16,19 +16,12 @@ public class Particle {
         this.theta = theta;
     }
 
-    public double getV() {
-        return v;
-    }
-
-    public void setV(double v) {
+    public Particle(double radio, double property, int id, Position position, double v, double theta) {
+        this.radio = radio;
+        this.property = property;
+        this.id = id;
+        this.position = position;
         this.v = v;
-    }
-
-    public double getTheta() {
-        return theta;
-    }
-
-    public void setTheta(double theta) {
         this.theta = theta;
     }
 
@@ -62,6 +55,25 @@ public class Particle {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public double getV() {
+        return v;
+    }
+
+    public void setV(double v) {
+        this.v = v;
+    }
+
+    public double getTheta() {
+        return theta;
+    }
+
+    public void setTheta(double theta) {
+        this.theta = theta;
+    }
+    public String getInfo(){
+        return "" + id + " - " + this.position.toString();
     }
 
     @Override

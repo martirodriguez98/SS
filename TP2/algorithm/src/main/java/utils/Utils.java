@@ -1,4 +1,4 @@
-package grid_utils;
+package utils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,17 +13,23 @@ public class Utils {
 
     public static List<Particle> generateParticlesList(int n,double r, double speed){
         List<Particle> particles = new LinkedList<>();
-        double theta, random;
+        double theta, random, x, y;
         double MIN = 0;
-//        double MAX = 2 * Math.PI;
         double MAX = Math.toRadians(360);
+        double MAX_POS = 100;
+        Position pos;
 
         for (int i = 0 ; i < n ; i++){
             random = new Random().nextDouble();
             theta = MIN + (random *(MAX-MIN));
+            random = new Random().nextDouble();
+            x = (random *(MAX_POS));
+            random = new Random().nextDouble();
+            y = (random *(MAX_POS));
+            pos = new Position(x,y);
+            particles.add(new Particle(r,0,i + 1,pos, speed, theta));
         }
         return particles;
-
     }
 
     public static void generateParticles(int n,boolean equalParticles,int L, String pathSt, String pathDy){
@@ -83,7 +89,6 @@ public class Utils {
     }
 
     public static void main(String[] args) {
-        System.out.println(Math.toRadians(360));
 //        generateParticles(Integer.parseInt(args[0]), Boolean.parseBoolean(args[1]),Integer.parseInt(args[2]) ,args[3],args[4]);
     }
 

@@ -1,6 +1,4 @@
-package grid_utils;
-
-import utils.AlgorithmTime;
+package utils;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -13,12 +11,12 @@ public class CellIndexMethod {
     final static String timesBF = "TP1/Algorithm/src/main/resources/Results/timesBF.txt";
 
 
-    public static int cellIndexMethod(List<Particle> particles, int L, int M, double rc, boolean periodicGrid) {
+    public static HashMap<Integer, Set<Particle>> cellIndexMethod(List<Particle> particles, int L, int M, double rc, boolean periodicGrid) {
         Grid grid = new Grid(particles, periodicGrid, M, L);
 
-        final AlgorithmTime algorithmTime = new AlgorithmTime();
+//        final AlgorithmTime algorithmTime = new AlgorithmTime();
 
-        algorithmTime.setStart(LocalDateTime.now());
+//        algorithmTime.setStart(LocalDateTime.now());
 
         List<List<Cell>> cells = grid.getGrid();
 
@@ -38,10 +36,11 @@ public class CellIndexMethod {
             }
         }
 
-        algorithmTime.setEnd(LocalDateTime.now());
-        LocalTime totalTime = algorithmTime.getTotalTime();
-        exportResults(neighbours);
-        return totalTime.getNano() / 1000000;
+//        algorithmTime.setEnd(LocalDateTime.now());
+//        LocalTime totalTime = algorithmTime.getTotalTime();
+//        exportResults(neighbours);
+//        return totalTime.getNano() / 1000000;
+        return neighbours;
 
     }
 
@@ -157,8 +156,8 @@ public class CellIndexMethod {
     }
 
     public static int bruteForceMethod(List<Particle> particles, int L, int M, double rc, boolean periodicGrid) {
-        AlgorithmTime algorithmTime = new AlgorithmTime();
-        algorithmTime.setStart(LocalDateTime.now());
+//        AlgorithmTime algorithmTime = new AlgorithmTime();
+//        algorithmTime.setStart(LocalDateTime.now());
         HashMap<Integer, Set<Particle>> neighbours = new HashMap<>();
         for (int i = 0; i < particles.size(); i++) {
             Particle pi = particles.get(i);
@@ -172,9 +171,10 @@ public class CellIndexMethod {
                 }
             }
         }
-        algorithmTime.setEnd(LocalDateTime.now());
+//        algorithmTime.setEnd(LocalDateTime.now());
         exportResults(neighbours);
-        return algorithmTime.getTotalTime().getNano() / 1000000;
+//        return algorithmTime.getTotalTime().getNano() / 1000000;
+        return 0;
     }
 
     public static boolean isNeighbour(Particle p1, Particle p2, double rc) {
@@ -184,7 +184,7 @@ public class CellIndexMethod {
         return distance - p1.getRadio() - p2.getRadio() <= rc;
     }
 
-    public static void run_neighbours(List<Particle> particles, int N, int L, int M, double rc, boolean periodicGrid){
+    public static void run_neighbours(List<Particle> particles, int N, int L,int M, double rc, boolean periodicGrid){
         HashMap<Integer, List<Integer>> executionTimes = new HashMap<>();
         List<Particle> particlesCopy = new LinkedList<>(particles);
 
@@ -200,7 +200,7 @@ public class CellIndexMethod {
             for (int i = 0; i < particles.size(); i++) {
                 particlesCopy.remove(0);
                 executionTimes.putIfAbsent(i, new LinkedList<>());
-                executionTimes.get(i).add(cellIndexMethod(particlesCopy, L, M, rc, periodicGrid));
+//                executionTimes.get(i).add(cellIndexMethod(particlesCopy, L, M, rc, periodicGrid));
             }
         }
 
@@ -256,6 +256,7 @@ public class CellIndexMethod {
         }
     }
 
+    /*
     public static void main(String[] args) {
         //todo check if parameters are ok.
         File static_file = new File(args[0]);
@@ -274,7 +275,7 @@ public class CellIndexMethod {
                 } else {
                     String data = myReader.nextLine();
                     String[] tokens = data.split("\s+");
-                    Particle p = new Particle(Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1]), index - 1, 0, 0);
+                    Particle p = new Particle(Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1]), index - 1);
                     particles.add(p);
                 }
                 index++;
@@ -319,5 +320,7 @@ public class CellIndexMethod {
 
 //        run_statistics(particles,N, L, M, rc, periodicGrid);
 
+
     }
+     */
 }

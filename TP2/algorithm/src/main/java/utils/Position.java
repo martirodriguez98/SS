@@ -1,4 +1,4 @@
-package grid_utils;
+package utils;
 
 public class Position {
     private double x;
