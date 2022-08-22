@@ -11,24 +11,24 @@ import java.util.Random;
 
 public class Utils {
 
-    public static List<Particle> generateParticlesList(int n,double r, double speed){
+    public static List<Particle> generateParticlesList(int n,double r, double speed, int L){
         List<Particle> particles = new LinkedList<>();
         double theta, random, x, y;
         double MIN = 0;
         double MAX = Math.toRadians(360);
-        double MAX_POS = 100;
         Position pos;
 
         for (int i = 0 ; i < n ; i++){
             random = new Random().nextDouble();
             theta = MIN + (random *(MAX-MIN));
             random = new Random().nextDouble();
-            x = (random *(MAX_POS));
+            x = (random * L);
             random = new Random().nextDouble();
-            y = (random *(MAX_POS));
+            y = (random * L);
             pos = new Position(x,y);
             particles.add(new Particle(r,0,i + 1,pos, speed, theta));
         }
+
         return particles;
     }
 
