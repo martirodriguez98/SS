@@ -1,12 +1,10 @@
 package utils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 
 public class Utils {
@@ -37,7 +35,7 @@ public class Utils {
         double MAX = 3;
         List<String> staticFile = new LinkedList<>();
         List<String> dynamicFile = new LinkedList<>();
-        double radio;
+        double radio, theta;
         int maxX = 100;
         int maxY = 100;
 
@@ -57,7 +55,10 @@ public class Utils {
             x = (random *(maxX));
             random = new Random().nextDouble();
             y = (random *(maxY));
-            dynamicFile.add("" + x + "\s" + y);
+            random = new Random().nextDouble();
+            theta = MIN + (random *(MAX-MIN));
+            dynamicFile.add("" + x + "\s" + y + "\s" + 0 + "\s" + theta);
+
         }
         exportToFile(staticFile,pathSt);
         exportToFile(dynamicFile,pathDy);
@@ -89,9 +90,61 @@ public class Utils {
     }
 
     public static void main(String[] args) {
-//        generateParticles(Integer.parseInt(args[0]), Boolean.parseBoolean(args[1]),Integer.parseInt(args[2]) ,args[3],args[4]);
+        generateParticles(Integer.parseInt(args[0]), Boolean.parseBoolean(args[1]),Integer.parseInt(args[2]) ,args[3],args[4]);
     }
 
+
+    public static InitialData parseFiles(File static_file, File dynamic_file){
+        List<Particle> particles = new LinkedList<>();
+        int N=-1,L=-1;
+        try {
+            Scanner myReader = new Scanner(static_file);
+            int index = 0;
+            while (myReader.hasNextLine()) {
+                if (index == 0) {
+                    N = Integer.parseInt(myReader.nextLine());
+                } else if (index == 1) {
+                    L = Integer.parseInt(myReader.nextLine());
+                } else {
+                    String data = myReader.nextLine();
+                    String[] tokens = data.split("\s+");
+                    Particle p = new Particle(Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1]), index - 1);
+                    particles.add(p);
+                }
+                index++;
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+        if (!particles.isEmpty()) {
+            try {
+                int index = 0;
+                Scanner myReader = new Scanner(dynamic_file);
+                while (myReader.hasNextLine()) {
+                    String data = myReader.nextLine();
+                    String[] tokens = data.split("\s+");
+                    if (tokens.length == 1) {
+                        //time
+                        index = 0;
+                    } else {
+                        particles.get(index - 1).setPosition(new Position(Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1])));
+                    }
+                    index++;
+
+                }
+                myReader.close();
+            } catch (FileNotFoundException e) {
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+            }
+        }
+        if (N!=-1 && L!=-1 && !particles.isEmpty())
+            return new InitialData(particles, N, L);
+        return null;
+    }
 
 }
 

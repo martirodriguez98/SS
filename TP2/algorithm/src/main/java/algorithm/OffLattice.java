@@ -1,23 +1,21 @@
 package algorithm;
 
-import utils.Cell;
-import utils.Grid;
-import utils.Particle;
-import utils.Position;
+import utils.*;
 
+import java.io.*;
 import java.util.*;
 
 import static utils.CellIndexMethod.cellIndexMethod;
 import static utils.Utils.generateParticlesList;
+import static utils.Utils.parseFiles;
 
 public class OffLattice {
-    public static void offLatticeMethod(List<Particle> particles, int L, int M, double rc, boolean periodicGrid, double n){
+    public static void offLatticeMethod(List<Particle> particles, int L, int M, double rc, boolean periodicGrid, double n, File dynamicFile){
 
         HashMap<Integer, Set<Particle>> neighbours;
         int T = 100;
-        for(int t = 0 ; t < T ; t++){
+        for(int t = 1 ; t < T ; t++){
             neighbours = cellIndexMethod(particles, L, M, rc, periodicGrid);
-
             for(Particle p : particles){
                 double avg_delta = get_average_theta(p,neighbours.get(p.getId()), n);
                 Position old_pos = p.getPosition();
@@ -34,8 +32,8 @@ public class OffLattice {
                 p.setPosition(new_pos);
                 p.setTheta(avg_delta);
             }
+            exportResults(t, particles, dynamicFile);
         }
-
     }
 
     public static double get_average_theta(Particle particle, Set<Particle> particles, double n){
@@ -56,15 +54,58 @@ public class OffLattice {
         return Math.atan2(sum_cos, sum_sin) + noise;
     }
 
+    public static void exportResults(int time, List<Particle> particles, File dynamic_file){
+
+        BufferedWriter bf = null;
+
+        try {
+
+            // create new BufferedWriter for the output file
+
+            bf = new BufferedWriter(new FileWriter(dynamic_file, true));
+
+            bf.write(String.valueOf(time));
+            bf.newLine();
+            // iterate map entries
+            for (Particle p : particles) {
+
+                // put key and value separated by a colon
+                bf.write(p.getId() + "\s"
+                        + p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getTheta());
+                // new line
+                bf.newLine();
+            }
+
+            bf.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // always close the writer
+                assert bf != null;
+                bf.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static void main(String[] args) {
-        int N = Integer.parseInt(args[0]);
-        int L = Integer.parseInt(args[1]);
+        if(args.length != 4){
+            throw new IllegalArgumentException("missing arguments");
+        }
+        File static_file = new File(args[0]);
+        File dynamic_file = new File(args[1]);
         double n = Double.parseDouble(args[2]);
         double rc = Double.parseDouble(args[3]);
-        List<Particle> particles = generateParticlesList(N,1,0.03, L);
-        double max_radio = particles.stream().max(Comparator.comparing(Particle::getRadio)).get().getRadio();
-        int M = (int) Math.floor(L / (rc + 2 * max_radio));
-        offLatticeMethod(particles,L, M, rc, true,n);
+
+        InitialData initialData = parseFiles(static_file, dynamic_file);
+        if (initialData == null) {
+            throw new IllegalArgumentException("Incorrect files");
+        }
+        double max_radio = initialData.getParticles().stream().max(Comparator.comparing(Particle::getRadio)).get().getRadio();
+        int M = (int) Math.floor(initialData.getL() / (rc + 2 * max_radio));
+        offLatticeMethod(initialData.getParticles(), initialData.getL(), M, rc, true,n,dynamic_file);
 
     }
 }

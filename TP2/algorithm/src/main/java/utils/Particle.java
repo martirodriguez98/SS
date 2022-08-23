@@ -8,6 +8,12 @@ public class Particle {
     private double v;
     private double theta;
 
+    public Particle(double radio, double property, int id) {
+        this.radio = radio;
+        this.property = property;
+        this.id = id;
+    }
+
     public Particle(double radio, double property, int id, double v, double theta) {
         this.id = id;
         this.radio = radio;
