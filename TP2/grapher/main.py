@@ -9,8 +9,10 @@ from ovito.pipeline import StaticSource, Pipeline
 
 
 def export_to_ovito(static_file, dynamic_file):
-    data = DataCollection()
     data_frame = get_particle_data(static_file, dynamic_file)
+
+    # Create a new Pipeline with a StaticSource as data source:
+    pipeline = Pipeline(source=StaticSource(data=DataCollection()))
 
     def simulation_cell(frame, data):
         # Insert a new SimulationCell object into a data collection:
@@ -23,15 +25,12 @@ def export_to_ovito(static_file, dynamic_file):
         particles = get_particles(data_frame[frame])
         data.objects.append(particles)
 
-    # Create a new Pipeline with a StaticSource as data source:
-    pipeline = Pipeline(source=StaticSource(data=data))
-
     # Apply a modifier:
-    pipeline.modifiers.append(CreateBondsModifier(cutoff=3.0))
+    pipeline.modifiers.append(simulation_cell)
 
-    export_file(pipeline, "grapher/results/results_ovito.dump", "lammps/dump",
-                columns=["id", "Position.X", "Position.Y", "Position.Z", "Radius", "theta"], multiple_frames=True,
-                start_frame=0, end_frame=len(data_frame) - 1)
+    export_file(pipeline, 'results/results_ovito.dump', 'lammps/dump',
+                columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius", "Angle"],
+                multiple_frames=True, start_frame=0, end_frame=len(data_frame) - 1)
 
 
 def get_particle_data(static_file, dynamic_file):
@@ -61,7 +60,7 @@ def get_particle_data(static_file, dynamic_file):
 
 def get_particles(data_frame):
     particles = Particles()
-    particles.create_property("Position", data=np.array(data_frame.x, data_frame.y, np.zeros(data_frame.x).T))
+    particles.create_property("Position", data=np.array((data_frame.x, data_frame.y, data_frame.z)).T)
     particles.create_property("Radius", data=data_frame.r)
     particles.create_property("Angle", data=data_frame.theta)
     return particles
