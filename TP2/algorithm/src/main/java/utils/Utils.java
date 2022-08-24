@@ -30,7 +30,7 @@ public class Utils {
         return particles;
     }
 
-    public static void generateParticles(int n,boolean equalParticles,int L, String pathSt, String pathDy){
+    public static void generateParticles(int n,boolean equalParticles,int L, double speed, String pathSt, String pathDy){
         double MIN = 0.1;
         double MAX = 3;
         List<String> staticFile = new LinkedList<>();
@@ -57,7 +57,7 @@ public class Utils {
             y = (random *(maxY));
             random = new Random().nextDouble();
             theta = MIN + (random *(MAX-MIN));
-            dynamicFile.add("" + x + "\s" + y + "\s" + 0 + "\s" + theta);
+            dynamicFile.add("" + x + "\s" + y + "\s" + 0 + "\s" + theta + "\s" + speed);
 
         }
         exportToFile(staticFile,pathSt);
@@ -90,7 +90,7 @@ public class Utils {
     }
 
     public static void main(String[] args) {
-        generateParticles(Integer.parseInt(args[0]), Boolean.parseBoolean(args[1]),Integer.parseInt(args[2]) ,args[3],args[4]);
+        generateParticles(Integer.parseInt(args[0]), Boolean.parseBoolean(args[1]),Integer.parseInt(args[2]) ,Double.parseDouble(args[3]), args[4],args[5]);
     }
 
 
@@ -130,7 +130,10 @@ public class Utils {
                         //time
                         index = 0;
                     } else {
-                        particles.get(index - 1).setPosition(new Position(Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1])));
+                        Particle particle = particles.get(index - 1);
+                        particle.setPosition(new Position(Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1])));
+                        particle.setTheta(Double.parseDouble(tokens[3]));
+                        particle.setV(Double.parseDouble(tokens[4]));
                     }
                     index++;
 

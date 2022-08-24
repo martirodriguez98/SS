@@ -17,8 +17,8 @@ def export_to_ovito(static_file, dynamic_file):
     def simulation_cell(frame, data):
         # Insert a new SimulationCell object into a data collection:
         cell = SimulationCell(pbc=(False, False, False))
-        cell[:, 0] = (4, 0, 0)
-        cell[:, 1] = (0, 2, 0)
+        cell[:, 0] = (100, 0, 0)
+        cell[:, 1] = (0, 100, 0)
         cell[:, 2] = (0, 0, 2)
         data.objects.append(cell)
 
@@ -49,10 +49,10 @@ def get_particle_data(static_file, dynamic_file):
             if len(line_info) > 1:
                 dynamic_lines.append(line_info)
             elif len(line_info) == 1:
-                df = pd.DataFrame(np.array(dynamic_lines), columns=["x", "y", "z", "theta"])
+                df = pd.DataFrame(np.array(dynamic_lines), columns=["x", "y", "z", "theta", "speed"])
                 dynamic_df.append(pd.concat([df, st_df], axis=1))
                 dynamic_lines = []
-        df = pd.DataFrame(np.array(dynamic_lines), columns=["x", "y", "z", "theta"])
+        df = pd.DataFrame(np.array(dynamic_lines), columns=["x", "y", "z", "theta", "speed"])
         dynamic_df.append(pd.concat([df, st_df], axis=1))
 
     return dynamic_df
