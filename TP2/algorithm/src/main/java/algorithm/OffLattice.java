@@ -70,8 +70,7 @@ public class OffLattice {
             for (Particle p : particles) {
 
                 // put key and value separated by a colon
-                bf.write(p.getId() + "\s"
-                        + p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getTheta());
+                bf.write(p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getTheta());
                 // new line
                 bf.newLine();
             }
