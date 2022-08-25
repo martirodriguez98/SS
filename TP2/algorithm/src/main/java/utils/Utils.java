@@ -31,8 +31,9 @@ public class Utils {
     }
 
     public static void generateParticles(int n,boolean equalParticles,int L, double speed, String pathSt, String pathDy){
-        double MIN = 0.1;
-        double MAX = 1;
+        double MIN = 0;
+        double MAX = Math.toRadians(360);
+        double MAX_R = 1;
         List<String> staticFile = new LinkedList<>();
         List<String> dynamicFile = new LinkedList<>();
         double radio, theta;
@@ -46,7 +47,7 @@ public class Utils {
                 radio = 0.25;
             }else {
                 random = new Random().nextDouble();
-                radio = MIN + (random *(MAX-MIN));
+                radio = MIN + (random *(MAX_R-MIN));
             }
             staticFile.add("" + radio + "\s" + "0");
             random = new Random().nextDouble();
