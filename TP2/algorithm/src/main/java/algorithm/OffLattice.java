@@ -6,15 +6,17 @@ import java.io.*;
 import java.util.*;
 
 import static utils.CellIndexMethod.cellIndexMethod;
-import static utils.Utils.generateParticlesList;
-import static utils.Utils.parseFiles;
+import static utils.Utils.*;
 
 public class OffLattice {
-    public static void offLatticeMethod(List<Particle> particles, int L, int M, double rc, boolean periodicGrid, double n, File dynamicFile){
-
+    public static void offLatticeMethod(List<Particle> particles, int L, int M, double rc, boolean periodicGrid, double n, File dynamicFile, String coeff_path){
         HashMap<Integer, Set<Particle>> neighbours;
         int T = 100;
-        for(int t = 1 ; t < T ; t++){
+        double order_coeff = get_order_coeff(particles);
+        List<String> coeff_list = new LinkedList<>();
+        coeff_list.add("0\s" + order_coeff);
+        int t = 1;
+        while (t < 8000){
             neighbours = cellIndexMethod(particles, L, M, rc, periodicGrid);
             for(Particle p : particles){
                 double avg_delta = get_average_theta(p,neighbours.get(p.getId()), n);
@@ -32,8 +34,23 @@ public class OffLattice {
                 p.setPosition(new_pos);
                 p.setTheta(avg_delta);
             }
+            order_coeff = get_order_coeff(particles);
+            coeff_list.add(t + "\s" +order_coeff);
             exportResults(t, particles, dynamicFile);
+            t++;
         }
+        exportCoeffList(coeff_list, coeff_path);
+    }
+
+    public static double get_order_coeff(List<Particle> particles){
+        double v = particles.get(0).getV();
+        double vx = 0, vy = 0;
+        for(Particle p : particles){
+            vx += Math.cos(p.getTheta()) * p.getV();
+            vy += Math.sin(p.getTheta()) * p.getV();
+        }
+        double v_sum = Math.sqrt(Math.pow(vx,2) + Math.pow(vy,2));
+        return v_sum / (particles.size() * v);
     }
 
     public static double get_average_theta(Particle particle, Set<Particle> particles, double n){
@@ -54,57 +71,19 @@ public class OffLattice {
         return Math.atan2(sum_cos, sum_sin) + noise;
     }
 
-    public static void exportResults(int time, List<Particle> particles, File dynamic_file){
 
-        BufferedWriter bf = null;
+    public static void runAlgorithm(String static_path, String dynamic_path, double n, double rc, String coeff_path) {
 
-        try {
-
-            // create new BufferedWriter for the output file
-
-            bf = new BufferedWriter(new FileWriter(dynamic_file, true));
-
-            bf.write(String.valueOf(time));
-            bf.newLine();
-            // iterate map entries
-            for (Particle p : particles) {
-
-                // put key and value separated by a colon
-                bf.write(p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getTheta() + "\s" + p.getV());
-                // new line
-                bf.newLine();
-            }
-
-            bf.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                // always close the writer
-                assert bf != null;
-                bf.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-        if(args.length != 4){
-            throw new IllegalArgumentException("missing arguments");
-        }
-        File static_file = new File(args[0]);
-        File dynamic_file = new File(args[1]);
-        double n = Double.parseDouble(args[2]);
-        double rc = Double.parseDouble(args[3]);
+        File static_file = new File(static_path);
+        File dynamic_file = new File(dynamic_path);
 
         InitialData initialData = parseFiles(static_file, dynamic_file);
         if (initialData == null) {
             throw new IllegalArgumentException("Incorrect files");
         }
         double max_radio = initialData.getParticles().stream().max(Comparator.comparing(Particle::getRadio)).get().getRadio();
-        int M = (int) Math.floor(initialData.getL() / (rc + 2 * max_radio));
-        offLatticeMethod(initialData.getParticles(), initialData.getL(), M, rc, true,n,dynamic_file);
+        int M = (int) Math.floor(initialData.getL() / (rc));
+        offLatticeMethod(initialData.getParticles(), initialData.getL(), M, rc, true,n,dynamic_file, coeff_path);
 
     }
 }

@@ -32,16 +32,14 @@ public class Utils {
 
     public static void generateParticles(int n,boolean equalParticles,int L, double speed, String pathSt, String pathDy){
         double MIN = 0.1;
-        double MAX = 3;
+        double MAX = 1;
         List<String> staticFile = new LinkedList<>();
         List<String> dynamicFile = new LinkedList<>();
         double radio, theta;
-        int maxX = 100;
-        int maxY = 100;
 
         double random, x, y;
         staticFile.add(String.valueOf(n));
-        staticFile.add(String.valueOf(100));
+        staticFile.add(String.valueOf(L));
         dynamicFile.add(String.valueOf(0));
         for(int i = 0 ; i < n ; i++){
             if(equalParticles){
@@ -52,9 +50,9 @@ public class Utils {
             }
             staticFile.add("" + radio + "\s" + "0");
             random = new Random().nextDouble();
-            x = (random *(maxX));
+            x = (random *(L));
             random = new Random().nextDouble();
-            y = (random *(maxY));
+            y = (random *(L));
             random = new Random().nextDouble();
             theta = MIN + (random *(MAX-MIN));
             dynamicFile.add("" + x + "\s" + y + "\s" + 0 + "\s" + theta + "\s" + speed);
@@ -88,11 +86,6 @@ public class Utils {
             }
         }
     }
-
-    public static void main(String[] args) {
-        generateParticles(Integer.parseInt(args[0]), Boolean.parseBoolean(args[1]),Integer.parseInt(args[2]) ,Double.parseDouble(args[3]), args[4],args[5]);
-    }
-
 
     public static InitialData parseFiles(File static_file, File dynamic_file){
         List<Particle> particles = new LinkedList<>();
@@ -147,6 +140,63 @@ public class Utils {
         if (N!=-1 && L!=-1 && !particles.isEmpty())
             return new InitialData(particles, N, L);
         return null;
+    }
+
+    public static void exportResults(int time, List<Particle> particles, File dynamic_file){
+
+        BufferedWriter bf = null;
+
+        try {
+
+            // create new BufferedWriter for the output file
+
+            bf = new BufferedWriter(new FileWriter(dynamic_file, true));
+
+            bf.write(String.valueOf(time));
+            bf.newLine();
+            // iterate map entries
+            for (Particle p : particles) {
+
+                // put key and value separated by a colon
+                bf.write(p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getTheta() + "\s" + p.getV());
+                // new line
+                bf.newLine();
+            }
+
+            bf.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // always close the writer
+                assert bf != null;
+                bf.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void exportCoeffList(List<String> coeff_list, String coeff_path){
+        BufferedWriter bf = null;
+        try {
+            bf = new BufferedWriter(new FileWriter(coeff_path, false));
+            for (String line : coeff_list) {
+                bf.write(line);
+                bf.newLine();
+            }
+            bf.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // always close the writer
+                assert bf != null;
+                bf.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
