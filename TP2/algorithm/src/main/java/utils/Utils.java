@@ -44,7 +44,7 @@ public class Utils {
         dynamicFile.add(String.valueOf(0));
         for(int i = 0 ; i < n ; i++){
             if(equalParticles){
-                radio = 0.25;
+                radio = 0;
             }else {
                 random = new Random().nextDouble();
                 radio = MIN + (random *(MAX_R-MIN));
@@ -62,7 +62,30 @@ public class Utils {
         exportToFile(staticFile,pathSt);
         exportToFile(dynamicFile,pathDy);
     }
+    public static void exportNoises(List<Double> noises, String path){
+        File file = new File(path);
+        BufferedWriter bf = null;
 
+        try {
+            // create new BufferedWriter for the output file
+            bf = new BufferedWriter(new FileWriter(file));
+
+            for (Double n : noises) {
+                bf.write(n.toString() + "\n");
+            }
+            bf.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // always close the writer
+                assert bf != null;
+                bf.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
     public static void exportToFile(List<String> list, String path){
         File file = new File(path);
         BufferedWriter bf = null;

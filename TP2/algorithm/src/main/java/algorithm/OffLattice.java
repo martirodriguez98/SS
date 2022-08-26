@@ -9,14 +9,14 @@ import static utils.CellIndexMethod.cellIndexMethod;
 import static utils.Utils.*;
 
 public class OffLattice {
-    public static void offLatticeMethod(List<Particle> particles, int L, int M, double rc, boolean periodicGrid, double n, File dynamicFile, String coeff_path){
+    public static void offLatticeMethod(List<Particle> particles, int L, int M, double rc, boolean periodicGrid, double n, File dynamicFile, String coeff_path, int iterations){
         HashMap<Integer, Set<Particle>> neighbours;
         int T = 100;
         double order_coeff = get_order_coeff(particles);
         List<String> coeff_list = new LinkedList<>();
         coeff_list.add("0\s" + order_coeff);
         int t = 1;
-        while (t < 8000){
+        while (t < iterations){
             neighbours = cellIndexMethod(particles, L, M, rc, periodicGrid);
             for(Particle p : particles){
                 double avg_delta = get_average_theta(p,neighbours.get(p.getId()), n);
@@ -68,11 +68,11 @@ public class OffLattice {
         }
         sum_sin = sum_sin / (particles.size() + 1);
         sum_cos = sum_cos / (particles.size() + 1);
-        return Math.atan2(sum_cos, sum_sin) + noise;
+        return Math.atan2(sum_sin, sum_cos) + noise;
     }
 
 
-    public static void runAlgorithm(String static_path, String dynamic_path, double n, double rc, String coeff_path) {
+    public static void runAlgorithm(String static_path, String dynamic_path, double n, double rc, String coeff_path, int iterations) {
 
         File static_file = new File(static_path);
         File dynamic_file = new File(dynamic_path);
@@ -83,7 +83,7 @@ public class OffLattice {
         }
         double max_radio = initialData.getParticles().stream().max(Comparator.comparing(Particle::getRadio)).get().getRadio();
         int M = (int) Math.floor(initialData.getL() / (rc));
-        offLatticeMethod(initialData.getParticles(), initialData.getL(), M, rc, true,n,dynamic_file, coeff_path);
+        offLatticeMethod(initialData.getParticles(), initialData.getL(), M, rc, true,n,dynamic_file, coeff_path, iterations);
 
     }
 }
