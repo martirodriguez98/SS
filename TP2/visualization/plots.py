@@ -3,7 +3,7 @@ from typing import Dict
 
 import plotly.graph_objects as go
 
-def plot_order_coeff(coeff_df_list: list, noises: pd.DataFrame, L, N):
+def plot_order_coeff(coeff_df_list: list, noises, L, N):
     # it = coeff_df["it"]
     #
     # data = coeff_df["coeff"]
@@ -13,7 +13,7 @@ def plot_order_coeff(coeff_df_list: list, noises: pd.DataFrame, L, N):
         data.append(go.Scatter(
             x = coeff_df_list[i]["it"],
             y = coeff_df_list[i]["coeff"],
-            name=noises.values[i][0],
+            name=noises[i],
             mode='lines',
         ))
 
@@ -28,4 +28,16 @@ def plot_order_coeff(coeff_df_list: list, noises: pd.DataFrame, L, N):
     )
     fig.show()
 
-# def plot_order_vs_noise():
+def plot_avg_order(average_order, std_dev, noises, iterations):
+
+    fig = go.Figure(
+        data = go.Scatter(
+            x=noises["n"], y =average_order,mode='markers', error_y=dict(array=std_dev)
+        ),
+        layout=go.Layout(
+            title=dict(text=f'Average order for different noises from iteration {iterations}'),
+            xaxis=dict(title='noise'),
+            yaxis=dict(title='Average order coefficient')
+        )
+    )
+    fig.show()
