@@ -9,28 +9,28 @@ import java.util.Scanner;
 
 public class Utils {
 
-    public static List<Particle> generateParticlesList(int n,double r, double speed, int L){
+    public static List<Particle> generateParticlesList(int n, double r, double speed, int L) {
         List<Particle> particles = new LinkedList<>();
         double theta, random, x, y;
         double MIN = 0;
         double MAX = Math.toRadians(360);
         Position pos;
 
-        for (int i = 0 ; i < n ; i++){
+        for (int i = 0; i < n; i++) {
             random = new Random().nextDouble();
-            theta = MIN + (random *(MAX-MIN));
+            theta = MIN + (random * (MAX - MIN));
             random = new Random().nextDouble();
             x = (random * L);
             random = new Random().nextDouble();
             y = (random * L);
-            pos = new Position(x,y);
-            particles.add(new Particle(r,0,i + 1,pos, speed, theta));
+            pos = new Position(x, y);
+            particles.add(new Particle(r, 0, i + 1, pos, speed, theta));
         }
 
         return particles;
     }
 
-    public static void generateParticles(int n,boolean equalParticles,int L, double speed, String pathSt, String pathDy){
+    public static void generateParticles(int n, boolean equalParticles, int L, double speed, String pathSt, String pathDy) {
         double MIN = 0;
         double MAX = Math.toRadians(360);
         double MAX_R = 1;
@@ -42,36 +42,37 @@ public class Utils {
         staticFile.add(String.valueOf(n));
         staticFile.add(String.valueOf(L));
         dynamicFile.add(String.valueOf(0));
-        for(int i = 0 ; i < n ; i++){
-            if(equalParticles){
+        for (int i = 0; i < n; i++) {
+            if (equalParticles) {
                 radio = 0;
-            }else {
+            } else {
                 random = new Random().nextDouble();
-                radio = MIN + (random *(MAX_R-MIN));
+                radio = MIN + (random * (MAX_R - MIN));
             }
             staticFile.add("" + radio + "\s" + "0");
             random = new Random().nextDouble();
-            x = (random *(L));
+            x = (random * (L));
             random = new Random().nextDouble();
-            y = (random *(L));
+            y = (random * (L));
             random = new Random().nextDouble();
-            theta = MIN + (random *(MAX-MIN));
+            theta = MIN + (random * (MAX - MIN));
             dynamicFile.add("" + x + "\s" + y + "\s" + 0 + "\s" + theta + "\s" + speed);
 
         }
-        exportToFile(staticFile,pathSt);
-        exportToFile(dynamicFile,pathDy);
+        exportToFile(staticFile, pathSt);
+        exportToFile(dynamicFile, pathDy);
     }
-    public static void exportNoises(List<Double> noises, String path){
+
+    public static <T> void exportParameters(List<T> parameters, String path) {
         File file = new File(path);
         BufferedWriter bf = null;
 
         try {
             // create new BufferedWriter for the output file
-            bf = new BufferedWriter(new FileWriter(file));
+            bf = new BufferedWriter(new FileWriter(file,false));
 
-            for (Double n : noises) {
-                bf.write(n.toString() + "\n");
+            for (T parameter : parameters) {
+                bf.write(parameter.toString() + "\n");
             }
             bf.flush();
         } catch (IOException e) {
@@ -86,7 +87,8 @@ public class Utils {
             }
         }
     }
-    public static void exportToFile(List<String> list, String path){
+
+    public static void exportToFile(List<String> list, String path) {
         File file = new File(path);
         BufferedWriter bf = null;
 
@@ -111,9 +113,9 @@ public class Utils {
         }
     }
 
-    public static InitialData parseFiles(File static_file, File dynamic_file){
+    public static InitialData parseFiles(File static_file, File dynamic_file) {
         List<Particle> particles = new LinkedList<>();
-        int N=-1,L=-1;
+        int N = -1, L = -1;
         try {
             Scanner myReader = new Scanner(static_file);
             int index = 0;
@@ -161,12 +163,12 @@ public class Utils {
                 e.printStackTrace();
             }
         }
-        if (N!=-1 && L!=-1 && !particles.isEmpty())
+        if (N != -1 && L != -1 && !particles.isEmpty())
             return new InitialData(particles, N, L);
         return null;
     }
 
-    public static void exportResults(int time, List<Particle> particles, File dynamic_file){
+    public static void exportResults(int time, List<Particle> particles, File dynamic_file) {
 
         BufferedWriter bf = null;
 
@@ -201,7 +203,7 @@ public class Utils {
         }
     }
 
-    public static void exportCoeffList(List<String> coeff_list, String coeff_path){
+    public static void exportCoeffList(List<String> coeff_list, String coeff_path) {
         BufferedWriter bf = null;
         try {
             bf = new BufferedWriter(new FileWriter(coeff_path, false));
