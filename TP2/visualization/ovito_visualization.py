@@ -4,7 +4,7 @@ from ovito.data import DataCollection, SimulationCell, Particles
 from ovito.io import export_file
 from ovito.pipeline import StaticSource, Pipeline
 
-def export_to_ovito(static_file, dynamic_file, L):
+def export_to_ovito(static_file, dynamic_file, L, export_path):
     data_frame = get_particle_data(static_file, dynamic_file)
 
     # Create a new Pipeline with a StaticSource as data source:
@@ -23,8 +23,8 @@ def export_to_ovito(static_file, dynamic_file, L):
 
     # Apply a modifier:
     pipeline.modifiers.append(simulation_cell)
-    export_file(pipeline, 'results/results_ovito.dump', 'lammps/dump',
-                columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius", "Angle", "Force.X", "Force.Y", "Force.Z"],
+    export_file(pipeline, export_path, 'lammps/dump',
+                columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius", "angle", "Force.X", "Force.Y", "Force.Z"],
                 multiple_frames=True, start_frame=0, end_frame=len(data_frame) - 1)
 
 
@@ -57,7 +57,7 @@ def get_particles(data_frame):
     particles = Particles()
     particles.create_property("Position", data=np.array((data_frame.x, data_frame.y, data_frame.z)).T)
     particles.create_property("Radius", data=data_frame.r)
-    particles.create_property("Angle", data=data_frame.theta)
+    particles.create_property("angle", data=data_frame.theta)
     particles.create_property("Force", data=np.array((np.cos(data_frame.theta) * data_frame.speed, np.sin(data_frame.theta) * data_frame.speed, np.zeros(len(data_frame.x)))).T)
     return particles
 

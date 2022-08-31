@@ -31,8 +31,8 @@ public class Utils {
     }
 
     public static void generateParticles(int n, boolean equalParticles, int L, double speed, String pathSt, String pathDy) {
-        double MIN = 0;
-        double MAX = Math.toRadians(360);
+        double MIN = -Math.PI;
+        double MAX = Math.PI;
         double MAX_R = 1;
         List<String> staticFile = new LinkedList<>();
         List<String> dynamicFile = new LinkedList<>();
