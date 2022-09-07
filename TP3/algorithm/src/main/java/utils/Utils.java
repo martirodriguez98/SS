@@ -6,6 +6,38 @@ import java.util.*;
 
 public class Utils {
 
+    public static List<Particle> generateFiles(int n, double radio, double mass, int L, double speed, String pathSt, String pathDy) {
+        double MIN = -Math.PI;
+        double MAX = Math.PI;
+        double MAX_R = 1;
+        List<String> staticFile = new LinkedList<>();
+        List<String> dynamicFile = new LinkedList<>();
+        Random randGen = new Random();
+
+        double random, x, y;
+        staticFile.add(String.valueOf(n));
+        staticFile.add(String.valueOf(L));
+        dynamicFile.add(String.valueOf(0));
+        Set<Position> usedPositions = new HashSet<>();
+        //bigger particle will be in the middle
+        usedPositions.add(new Position(L/2.0,L/2.0));
+        List<Particle> createdParticles = new ArrayList<>();
+        int createdParticlesCount = 0;
+        while (createdParticlesCount < n){
+            Particle p = Particle.randomParticle();
+
+            staticFile.add("" + radio + "\s" + "0");
+            dynamicFile.add("" + x + "\s" + y + "\s" + 0 + "\s" + theta + "\s" + speed);
+
+        }
+        exportToFile(staticFile, pathSt);
+        exportToFile(dynamicFile, pathDy);
+    }
+
+
+
+
+
     public static void generateFiles(int n, boolean equalParticles, int L, double speed, String pathSt, String pathDy) {
         double MIN = -Math.PI;
         double MAX = Math.PI;
@@ -19,6 +51,9 @@ public class Utils {
         staticFile.add(String.valueOf(L));
         dynamicFile.add(String.valueOf(0));
         Set<Position> usedPositions = new HashSet<>();
+        //bigger particle will be in the middle
+        usedPositions.add(new Position(L/2.0,L/2.0));
+
         for (int i = 0; i < n; i++) {
             if (equalParticles) {
                 radio = 0;

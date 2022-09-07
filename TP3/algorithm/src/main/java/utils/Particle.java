@@ -1,5 +1,7 @@
 package utils;
 
+import java.util.Random;
+
 public class Particle {
     private double radio;
     private double mass;
@@ -22,7 +24,7 @@ public class Particle {
         this.theta = theta;
     }
 
-    public Particle(double radio, double mass, int id, Position position, double v, double theta) {
+    public Particle(int id, double radio, double mass, Position position, double v, double theta) {
         this.radio = radio;
         this.mass = mass;
         this.id = id;
@@ -80,6 +82,18 @@ public class Particle {
     }
     public String getInfo(){
         return "" + id + " - " + this.position.toString();
+    }
+
+    public static Particle randomParticle(final Random randomGen, final int id, final double radio, final double speed, final int L, final double mass) {
+        double x = randDouble(randomGen, radio, L-radio);
+        double y = randDouble(randomGen, radio, L-radio);
+        double v = randDouble(randomGen, 0, speed);
+        double theta = randDouble(randomGen, -Math.PI, Math.PI);
+        return new Particle(id, radio, mass, new Position(x,y), v, theta);
+    }
+
+    public static double randDouble(final Random randomGen, final double min, final double max){
+        return min + randomGen.nextDouble() * (max-min);
     }
 
     @Override
