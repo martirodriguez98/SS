@@ -101,12 +101,16 @@ public class Particle {
         return Math.hypot(position.getX() -other.getPosition().getX(), position.getY() - other.getPosition().getY() - radio - other.radio);
     }
 
-    public boolean collides(final Particle particle, int L){
+    public boolean collidesWithWall(final int L){
+        return position.getX() + radio <= 0 || position.getX() + radio >= L || position.getY() + radio <= 0 || position.getY() + radio >= L;
+    }
+
+    public boolean collides(final Particle particle){
         return distance(particle) <= 0;
     }
 
     public boolean collides(final Collection<Particle> particles, int L){
-        return particles.stream().anyMatch(p -> collides(p, L));
+        return collidesWithWall(L) || particles.stream().anyMatch(this::collides);
     }
 
     @Override
