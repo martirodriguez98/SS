@@ -6,36 +6,35 @@ import java.util.*;
 
 public class Utils {
 
-    public static List<Particle> generateFiles(int n, double radio, double mass, int L, double speed, String pathSt, String pathDy) {
-        double MIN = -Math.PI;
-        double MAX = Math.PI;
-        double MAX_R = 1;
+    public static List<Particle> generateParticles(int n, double radio, double mass, int L, double speed, double bigRadio, double bigMass, double bigSpeed, String pathSt, String pathDy) {
+
         List<String> staticFile = new LinkedList<>();
         List<String> dynamicFile = new LinkedList<>();
         Random randGen = new Random();
 
-        double random, x, y;
         staticFile.add(String.valueOf(n));
         staticFile.add(String.valueOf(L));
         dynamicFile.add(String.valueOf(0));
-        Set<Position> usedPositions = new HashSet<>();
-        //bigger particle will be in the middle
-        usedPositions.add(new Position(L/2.0,L/2.0));
+
         List<Particle> createdParticles = new ArrayList<>();
-        int createdParticlesCount = 0;
-        while (createdParticlesCount < n){
-            Particle p = Particle.randomParticle();
+        createdParticles.add(new Particle(0, bigRadio, bigMass, new Position((double) L/2, (double) L/2), bigSpeed, bigSpeed));
+        staticFile.add("" + bigRadio + "\s" + bigMass);
+        dynamicFile.add("" + createdParticles.get(0).getPosition().getX() + "\s" + createdParticles.get(0).getPosition().getY()  + "\s" + 0 + "\s" + createdParticles.get(0).getTheta() + "\s" + createdParticles.get(0).getV());
 
-            staticFile.add("" + radio + "\s" + "0");
-            dynamicFile.add("" + x + "\s" + y + "\s" + 0 + "\s" + theta + "\s" + speed);
-
+        int createdParticlesCount = 1;
+        while (createdParticlesCount < n + 1){
+            Particle p = Particle.randomParticle(randGen, createdParticlesCount, radio, speed, L, mass);
+            if(!p.collides(createdParticles, L)){
+                createdParticles.add(p);
+                createdParticlesCount++;
+                staticFile.add("" + radio + "\s" + mass);
+                dynamicFile.add("" + p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getTheta() + "\s" + p.getV());
+            }
         }
         exportToFile(staticFile, pathSt);
         exportToFile(dynamicFile, pathDy);
+        return createdParticles;
     }
-
-
-
 
 
     public static void generateFiles(int n, boolean equalParticles, int L, double speed, String pathSt, String pathDy) {

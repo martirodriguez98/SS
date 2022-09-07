@@ -1390,3 +1390,19 @@ TP3/algorithm/target/classes/Test.class
 TP3/.idea/
 
 TP3/algorithm/.idea/
+
+TP3/algorithm/target/classes/dynamic_100.txt
+
+TP3/algorithm/target/classes/static_100.txt
+
+TP3/algorithm/target/classes/utils/InitialData.class
+
+TP3/algorithm/target/classes/utils/Particle.class
+
+TP3/algorithm/target/classes/utils/Position.class
+
+TP3/algorithm/target/classes/utils/Utils.class
+
+TP3/algorithm/src/main/resources/dynamic_100.txt
+
+TP3/algorithm/src/main/resources/static_100.txt

@@ -1,5 +1,6 @@
 package utils;
 
+import java.util.Collection;
 import java.util.Random;
 
 public class Particle {
@@ -94,6 +95,18 @@ public class Particle {
 
     public static double randDouble(final Random randomGen, final double min, final double max){
         return min + randomGen.nextDouble() * (max-min);
+    }
+
+    public double distance(final Particle other){
+        return Math.hypot(position.getX() -other.getPosition().getX(), position.getY() - other.getPosition().getY() - radio - other.radio);
+    }
+
+    public boolean collides(final Particle particle, int L){
+        return distance(particle) <= 0;
+    }
+
+    public boolean collides(final Collection<Particle> particles, int L){
+        return particles.stream().anyMatch(p -> collides(p, L));
     }
 
     @Override
