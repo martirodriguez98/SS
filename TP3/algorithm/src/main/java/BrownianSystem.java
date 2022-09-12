@@ -3,6 +3,10 @@ import utils.Particle;
 import utils.Position;
 import utils.Walls;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,27 +20,35 @@ public class BrownianSystem {
      */
     public static void algorithm(List<Particle> particles, int L, int iterations, String pathDy) {
         List<List<Collision>> nextCollisions = calculateNextCollision(particles, L); //1 time
+        List<Double> times = new LinkedList<>();
+        times.add(0.0);
         int i = 0;
         while (i < iterations){
-            if(updateStates(nextCollisions,particles, L, pathDy)){
+            if(updateStates(nextCollisions,particles, L,times, pathDy)){
                 return;
             }
             i++;
         }
     }
 
-    public static boolean updateStates(List<List<Collision>> collisions,List<Particle> particles, int L, String pathDy) {
+    public static boolean updateStates(List<List<Collision>> collisions,List<Particle> particles, int L,List<Double> times, String pathDy) {
         double minT = Double.MAX_VALUE;
         Collision minTimeCollision = null;
+        final double EPSILON = 1.0E-6;
         for (List<Collision> collisionList : collisions) {
             for (Collision c : collisionList) {
-                if (c.getTime() < minT) {
+                if (Math.abs(minT-c.getTime()) < EPSILON) {
                     minT = c.getTime();
                     minTimeCollision = c;
                 }
             }
         }
         assert minTimeCollision != null;
+        System.out.println("min time " + minT + " == " + minTimeCollision.getTime());
+
+        times.add(times.get(times.size()-1) + minTimeCollision.getTime());
+        System.out.println(times.get(times.size()-1));
+        System.out.println("--------------------");
         //actualizar x e y de la minima
         updateParticlePosition(minTimeCollision.getP1(), minTimeCollision.getTime());
         if(!minTimeCollision.isWall()){
@@ -65,7 +77,7 @@ public class BrownianSystem {
                 updateParticlePosition(particle, minTimeCollision.getTime());
         }
 
-        exportStates(particles, minTimeCollision.getTime(), pathDy);
+        exportStates(particles, times.get(times.size()-1), pathDy);
         return bigParticleInWall(collisions.get(0).get(0).getP1(), L);
     }
 
@@ -171,11 +183,31 @@ public class BrownianSystem {
         if (d < 0) {
             return Double.MAX_VALUE;
         }
+
         return -((dvr + Math.sqrt(d)) / (dv));
+
     }
 
     private static void exportStates(List<Particle> particles, double time, String pathDy){
-        
+        File file = new File(pathDy);
+        BufferedWriter bf = null;
+        try{
+            bf = new BufferedWriter(new FileWriter(file, true));
+            for(Particle p : particles ){
+                bf.write(p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getTheta() + "\s" + p.getV());
+            }
+            bf.flush();
+        }catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // always close the writer
+                assert bf != null;
+                bf.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 
