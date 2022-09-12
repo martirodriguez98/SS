@@ -14,13 +14,18 @@ public class BrownianSystem {
         - actualizar las colisiones de todas las que involucran a las del choque
         - a las demas se les resta el tiempo del choque
      */
-    public static void algorithm(List<Particle> particles, int L) {
-        List<List<Collision>> nextCollisions = calculateNextCollision(particles, L);
-        updateStates(nextCollisions, L);
-
+    public static void algorithm(List<Particle> particles, int L, int iterations, String pathDy) {
+        List<List<Collision>> nextCollisions = calculateNextCollision(particles, L); //1 time
+        int i = 0;
+        while (i < iterations){
+            if(updateStates(nextCollisions,particles, L, pathDy)){
+                return;
+            }
+            i++;
+        }
     }
 
-    public static void updateStates(List<List<Collision>> collisions, int L) {
+    public static boolean updateStates(List<List<Collision>> collisions,List<Particle> particles, int L, String pathDy) {
         double minT = Double.MAX_VALUE;
         Collision minTimeCollision = null;
         for (List<Collision> collisionList : collisions) {
@@ -33,7 +38,10 @@ public class BrownianSystem {
         }
         assert minTimeCollision != null;
         //actualizar x e y de la minima
-        updateParticlePosition(minTimeCollision);
+        updateParticlePosition(minTimeCollision.getP1(), minTimeCollision.getTime());
+        if(!minTimeCollision.isWall()){
+            updateParticlePosition(minTimeCollision.getP2(), minTimeCollision.getTime());
+        }
 
         for (int i = 0; i < collisions.size(); i++) {
             if (minTimeCollision.isWall()) {
@@ -52,6 +60,13 @@ public class BrownianSystem {
                 }
             }
         }
+        for(Particle particle : particles){
+            if (!particle.equals(minTimeCollision.getP1()) && !particle.equals(minTimeCollision.getP2()))
+                updateParticlePosition(particle, minTimeCollision.getTime());
+        }
+
+        exportStates(particles, minTimeCollision.getTime(), pathDy);
+        return bigParticleInWall(collisions.get(0).get(0).getP1(), L);
     }
 
     public static void updateParticleCollisions(List<Collision> collisions, int L) {
@@ -68,19 +83,12 @@ public class BrownianSystem {
 
     }
 
-    private static void updateParticlePosition(Collision collision) {
+    private static void updateParticlePosition(Particle particle, double minTime) {
         double posX1, posY1;
-        posX1 = collision.getP1().getPosition().getX();
-        posY1 = collision.getP1().getPosition().getY();
-        Particle p1 = collision.getP1();
-        collision.getP1().setPosition(new Position(posX1 + p1.getV() * Math.cos(p1.getTheta()) * collision.getTime(), posY1 + p1.getV() * Math.sin(p1.getTheta()) * collision.getTime()) );
-        double posX2, posY2;
-        if (!collision.isWall()){
-            posX2 = collision.getP2().getPosition().getX();
-            posY2 = collision.getP2().getPosition().getY();
-            Particle p2 = collision.getP2();
-            collision.getP1().setPosition(new Position(posX2 + p2.getV() * Math.cos(p2.getTheta()) * collision.getTime(), posY2 + p2.getV() * Math.sin(p2.getTheta()) * collision.getTime()) );
-        }
+        posX1 = particle.getPosition().getX();
+        posY1 = particle.getPosition().getY();
+        particle.setPosition(new Position(posX1 + particle.getV() * Math.cos(particle.getTheta()) * minTime, posY1 + particle.getV() * Math.sin(particle.getTheta()) * minTime) );
+
     }
 
     public static List<List<Collision>> calculateNextCollision(List<Particle> particleList, int L) {
@@ -141,6 +149,11 @@ public class BrownianSystem {
         }
     }
 
+    private static boolean bigParticleInWall(Particle particle, int L){
+        double posX = particle.getPosition().getX() + particle.getRadio();
+        double posY = particle.getPosition().getY() + particle.getRadio();
+        return posX == 0 || Math.abs(posX - L) <= 0.01 || posY == 0 || Math.abs(posY - L) <= 0.01; // TODO fijarse si el error es suficiente o es mucho
+    }
 
     private static double calculateCollisionTime(Particle p1, Particle p2) {
         double dx = p1.getPosition().getX() - p2.getPosition().getX();
@@ -159,6 +172,10 @@ public class BrownianSystem {
             return Double.MAX_VALUE;
         }
         return -((dvr + Math.sqrt(d)) / (dv));
+    }
+
+    private static void exportStates(List<Particle> particles, double time, String pathDy){
+        
     }
 }
 

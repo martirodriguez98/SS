@@ -15,5 +15,7 @@ public class Test {
         String pathDy = "src/main/resources/dynamic_" + n + ".txt";
 
         List<Particle> particles = generateParticles(n, radio, mass, L, speed, bigRadio, bigMass, bigSpeed, pathSt, pathDy);
+        int iterations = 100;
+        BrownianSystem.algorithm(particles, L, iterations, pathDy);
     }
 }
