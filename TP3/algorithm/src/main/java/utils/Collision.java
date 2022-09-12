@@ -62,4 +62,30 @@ public class Collision {
     public void setP2(Particle p2) {
         this.p2 = p2;
     }
+
+    public void minusTime(double time){
+        this.time -= time;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Collision)) return false;
+
+        Collision collision = (Collision) o;
+        if(p1 == collision.p1){
+            if (isWall && collision.isWall){
+                return wall == collision.wall;
+            }
+            return p2 == collision.p2;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = p1 != null ? p1.hashCode() : 0;
+        result = 31 * result + (p2 != null ? p2.hashCode() : 0);
+        return result;
+    }
 }
