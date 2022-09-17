@@ -3,6 +3,7 @@ import utils.Particle;
 import utils.Position;
 import utils.Walls;
 
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -85,7 +86,6 @@ public class BrownianSystem {
                 double particleTime = calculateCollisionTime(particleList.get(i), particleList.get(j));
                 WallCollision wallTime = calculateCollisionTimeWall(particleList.get(i), L);
                 if (Double.compare(particleTime, minTime) < 0) {
-                    System.out.println("ENTREEEEEEEEEEEEEEE");
                     minTime = particleTime;
                     minTimeCollision = new Collision(minTime, particleList.get(i), particleList.get(j));
                 }

@@ -17,19 +17,34 @@ public class Utils {
         dynamicFile.add(String.valueOf(0));
 
         List<Particle> createdParticles = new ArrayList<>();
-        createdParticles.add(new Particle(0, bigRadio, bigMass, new Position((double) L/2, (double) L/2), bigSpeed, bigSpeed));
+        createdParticles.add(new Particle(0, bigRadio, bigMass, new Position((double) L / 2, (double) L / 2), bigSpeed, bigSpeed));
         staticFile.add("" + bigRadio + "\s" + bigMass);
-        dynamicFile.add("" + createdParticles.get(0).getPosition().getX() + "\s" + createdParticles.get(0).getPosition().getY()  + "\s" + 0 + "\s" + createdParticles.get(0).getVx() + "\s" + createdParticles.get(0).getVy());
+        dynamicFile.add("" + createdParticles.get(0).getPosition().getX() + "\s" + createdParticles.get(0).getPosition().getY() + "\s" + 0 + "\s" + createdParticles.get(0).getVx() + "\s" + createdParticles.get(0).getVy());
 
         int createdParticlesCount = 1;
-        while (createdParticlesCount < n + 1){
-            Particle p = Particle.randomParticle(randGen, createdParticlesCount, radio, speed, L, mass);
-            if(!p.collides(createdParticles, L)){
-                createdParticles.add(p);
-                createdParticlesCount++;
-                staticFile.add("" + radio + "\s" + mass);
-                dynamicFile.add("" + p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getVx() + "\s" + p.getVy());
+        boolean success = false;
+        while (createdParticlesCount < n + 1) {
+            while (!success) {
+                success = true;
+                Particle p = Particle.randomParticle(randGen, createdParticlesCount, radio, speed, L, mass);
+
+                for (Particle particle : createdParticles) {
+                    double positionX = Math.pow(p.getPosition().getX() - particle.getPosition().getX(), 2);
+                    double positionY = Math.pow(p.getPosition().getY() - particle.getPosition().getY(), 2);
+                    double radios = Math.pow(p.getRadio() - particle.getRadio(), 2);
+                    if (positionX + positionY <= radios) {
+                        success = false;
+                    }
+                }
+
+                if (success) {
+                    createdParticles.add(p);
+                    createdParticlesCount++;
+                    staticFile.add("" + radio + "\s" + mass);
+                    dynamicFile.add("" + p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getVx() + "\s" + p.getVy());
+                }
             }
+            success = false;
         }
         exportToFile(staticFile, pathSt);
         exportToFile(dynamicFile, pathDy);
@@ -51,7 +66,7 @@ public class Utils {
         dynamicFile.add(String.valueOf(0));
         Set<Position> usedPositions = new HashSet<>();
         //bigger particle will be in the middle
-        usedPositions.add(new Position(L/2.0,L/2.0));
+        usedPositions.add(new Position(L / 2.0, L / 2.0));
 
         for (int i = 0; i < n; i++) {
             if (equalParticles) {
@@ -66,7 +81,7 @@ public class Utils {
             random = new Random().nextDouble();
             y = (random * (L));
             Position pos = new Position(x, y);
-            while(usedPositions.contains(pos)) {
+            while (usedPositions.contains(pos)) {
                 random = new Random().nextDouble();
                 x = (random * (L));
                 random = new Random().nextDouble();

@@ -118,7 +118,7 @@ public class Particle {
     }
 
     public double distance(final Particle other){
-        return Math.hypot(position.getX() -other.getPosition().getX(), position.getY() - other.getPosition().getY() - radio - other.radio);
+        return Math.hypot(position.getX() -other.getPosition().getX() - radio - other.radio , position.getY() - other.getPosition().getY() - radio - other.radio);
     }
 
     public boolean collidesWithWall(final int L){
