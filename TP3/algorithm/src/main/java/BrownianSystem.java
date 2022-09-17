@@ -82,6 +82,7 @@ public class BrownianSystem {
                 double particleTime = calculateCollisionTime(particleList.get(i), particleList.get(j));
                 WallCollision wallTime = calculateCollisionTimeWall(particleList.get(i), L);
                 if (Double.compare(particleTime, minTime) < 0) {
+                    System.out.println("ENTREEEEEEEEEEEEEEE");
                     minTime = particleTime;
                     minTimeCollision = new Collision(minTime, particleList.get(i), particleList.get(j));
                 }
@@ -95,8 +96,8 @@ public class BrownianSystem {
     }
 
     private static WallCollision calculateCollisionTimeWall(Particle p1, int L) {
-        double vx = p1.getV() * Math.cos(p1.getTheta());
-        double vy = p1.getV() * Math.sin(p1.getTheta());
+        double vx = p1.getVx();
+        double vy = p1.getVy();
         double x = p1.getPosition().getX();
         double y = p1.getPosition().getY();
         double r = p1.getRadio();
@@ -141,8 +142,8 @@ public class BrownianSystem {
     private static double calculateCollisionTime(Particle p1, Particle p2) {
         double dx = p1.getPosition().getX() - p2.getPosition().getX();
         double dy = p1.getPosition().getY() - p2.getPosition().getY();
-        double dvx = p1.getV() * Math.cos(p1.getTheta()) - p2.getV() * Math.cos(p2.getTheta());
-        double dvy = p1.getV() * Math.sin(p1.getTheta()) - p2.getV() * Math.sin(p2.getTheta());
+        double dvx = p1.getVx() - p2.getVx();
+        double dvy = p1.getVy() - p2.getVy();
         double dvr = dx * dvx + dy * dvy;
         double sigma = p1.getRadio() + p2.getRadio();
         double dr = Math.pow(dx, 2) + Math.pow(dy, 2);
