@@ -11,8 +11,8 @@ public class Test {
         double mass = 0.9, bigMass = 2;
         int L = 6;
         double speed = 2, bigSpeed = 0;
-        String pathSt = "C:/Users/Anita/Desktop/ITBA/SS/SS/TP3/algorithm/src/main/resources/static_" + n + ".txt";
-        String pathDy = "C:/Users/Anita/Desktop/ITBA/SS/SS/TP3/algorithm/src/main/resources/dynamic_" + n + ".txt";
+        String pathSt = "src/main/resources/static_" + n + ".txt";
+        String pathDy = "src/main/resources/dynamic_" + n + ".txt";
 
         List<Particle> particles = generateParticles(n, radio, mass, L, speed, bigRadio, bigMass, bigSpeed, pathSt, pathDy);
         int iterations = 100;

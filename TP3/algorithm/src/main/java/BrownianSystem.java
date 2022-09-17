@@ -20,14 +20,17 @@ public class BrownianSystem {
      */
     public static void algorithm(List<Particle> particles, int L, int iterations, String pathDy) {
         int i = 0;
+        List<Double> timeHistory = new LinkedList<>();
+        timeHistory.add(0.0);
         while (i < iterations) {
             Collision minTimeCollision = calculateNextCollision(particles, L);
-            updateStates(minTimeCollision, particles, L, pathDy);
+            timeHistory.add(minTimeCollision.getTime()+timeHistory.get(timeHistory.size()-1));
+            updateStates(minTimeCollision, particles, L, pathDy, timeHistory);
             i++;
         }
     }
 
-    public static void updateStates(Collision collision, List<Particle> particles, int L, String pathDy) {
+    public static void updateStates(Collision collision, List<Particle> particles, int L, String pathDy, List<Double> timeHistory) {
         for (Particle particle : particles) {
             updateParticlePosition(particle, collision.getTime());
         }
@@ -36,7 +39,7 @@ public class BrownianSystem {
         } else {
             updateParticleVelocityWithWall(collision);
         }
-        exportStates(particles,collision.getTime(),pathDy);
+        exportStates(particles, pathDy, timeHistory);
     }
 
     private static void updateParticleVelocity(Particle p1, Particle p2) {
@@ -117,7 +120,7 @@ public class BrownianSystem {
         Walls wall = collision.getWall();
         if (wall == Walls.TOP || wall == Walls.BOTTOM) {
             collision.getP1().setVx(-collision.getP1().getVx());
-        }else{
+        } else {
             collision.getP1().setVy(-collision.getP1().getVy());
         }
     }
@@ -166,14 +169,17 @@ public class BrownianSystem {
         return collisionTime;
     }
 
-    private static void exportStates(List<Particle> particles, double time, String pathDy) {
+    private static void exportStates(List<Particle> particles, String pathDy, List<Double> timeHistory) {
         File file = new File(pathDy);
         BufferedWriter bf = null;
         try {
             bf = new BufferedWriter(new FileWriter(file, true));
+
+            bf.write(timeHistory.get(timeHistory.size()-1) + "\n");
             for (Particle p : particles) {
                 bf.write(p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getVx() + "\s" + p.getVy() + "\n");
             }
+
             bf.flush();
         } catch (IOException e) {
             e.printStackTrace();
