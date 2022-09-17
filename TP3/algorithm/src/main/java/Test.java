@@ -6,7 +6,7 @@ import static utils.Utils.generateParticles;
 
 public class Test {
     public static void main(String[] args) {
-        int n = 3;
+        int n = 30;
         double radio = 0.2, bigRadio = 0.7;
         double mass = 0.9, bigMass = 2;
         int L = 6;

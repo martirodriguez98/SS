@@ -1,16 +1,16 @@
-# This is a sample Python script.
-
-# Press <no shortcut> to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+from ovito_visualization import export_to_ovito
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+def test():
+    N = 30
+    L = 6
+    static_file = f'/Users/martirodriguez/Documents/ITBA/SS/SS/TP3/algorithm/src/main/resources/static_{N}.txt'
+    dynamic_file = f'/Users/martirodriguez/Documents/ITBA/SS/SS/TP3/algorithm/src/main/resources/dynamic_{N}.txt'
+    export_path = f'/Users/martirodriguez/Documents/ITBA/SS/SS/TP3/visualization/results/ovito_{N}.dump'
+    export_to_ovito(static_file, dynamic_file,L, export_path)
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    test()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
