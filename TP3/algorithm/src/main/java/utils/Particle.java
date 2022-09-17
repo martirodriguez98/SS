@@ -11,6 +11,10 @@ public class Particle {
     private double v;
     private double theta;
 
+    private double vx;
+
+    private double vy;
+
     public Particle(double radio, double mass, int id) {
         this.radio = radio;
         this.mass = mass;
@@ -25,13 +29,13 @@ public class Particle {
         this.theta = theta;
     }
 
-    public Particle(int id, double radio, double mass, Position position, double v, double theta) {
+    public Particle(int id, double radio, double mass, Position position, double vx, double vy) {
         this.radio = radio;
         this.mass = mass;
         this.id = id;
         this.position = position;
-        this.v = v;
-        this.theta = theta;
+        this.vx = vx;
+        this.vy=vy;
     }
 
     public double getRadio() {
@@ -74,6 +78,22 @@ public class Particle {
         this.v = v;
     }
 
+    public double getVx() {
+        return vx;
+    }
+
+    public void setVx(double vx) {
+        this.vx = vx;
+    }
+
+    public double getVy() {
+        return vy;
+    }
+
+    public void setVy(double vy) {
+        this.vy = vy;
+    }
+
     public double getTheta() {
         return theta;
     }
@@ -90,7 +110,7 @@ public class Particle {
         double y = randDouble(randomGen, radio, L-radio);
         double v = randDouble(randomGen, 0, speed);
         double theta = randDouble(randomGen, -Math.PI, Math.PI);
-        return new Particle(id, radio, mass, new Position(x,y), v, theta);
+        return new Particle(id, radio, mass, new Position(x,y), v*Math.cos(theta), v*Math.sin(theta));
     }
 
     public static double randDouble(final Random randomGen, final double min, final double max){

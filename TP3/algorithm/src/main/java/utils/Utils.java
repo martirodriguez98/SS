@@ -19,7 +19,7 @@ public class Utils {
         List<Particle> createdParticles = new ArrayList<>();
         createdParticles.add(new Particle(0, bigRadio, bigMass, new Position((double) L/2, (double) L/2), bigSpeed, bigSpeed));
         staticFile.add("" + bigRadio + "\s" + bigMass);
-        dynamicFile.add("" + createdParticles.get(0).getPosition().getX() + "\s" + createdParticles.get(0).getPosition().getY()  + "\s" + 0 + "\s" + createdParticles.get(0).getTheta() + "\s" + createdParticles.get(0).getV());
+        dynamicFile.add("" + createdParticles.get(0).getPosition().getX() + "\s" + createdParticles.get(0).getPosition().getY()  + "\s" + 0 + "\s" + createdParticles.get(0).getVx() + "\s" + createdParticles.get(0).getVy());
 
         int createdParticlesCount = 1;
         while (createdParticlesCount < n + 1){
@@ -28,7 +28,7 @@ public class Utils {
                 createdParticles.add(p);
                 createdParticlesCount++;
                 staticFile.add("" + radio + "\s" + mass);
-                dynamicFile.add("" + p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getTheta() + "\s" + p.getV());
+                dynamicFile.add("" + p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getVx() + "\s" + p.getVy());
             }
         }
         exportToFile(staticFile, pathSt);
