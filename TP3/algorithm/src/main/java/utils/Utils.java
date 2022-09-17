@@ -191,9 +191,7 @@ public class Utils {
     }
 
     public static void exportResults(int time, List<Particle> particles, File dynamic_file) {
-
         BufferedWriter bf = null;
-
         try {
 
             // create new BufferedWriter for the output file
@@ -204,7 +202,6 @@ public class Utils {
             bf.newLine();
             // iterate map entries
             for (Particle p : particles) {
-
                 // put key and value separated by a colon
                 bf.write(p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getTheta() + "\s" + p.getV());
                 // new line

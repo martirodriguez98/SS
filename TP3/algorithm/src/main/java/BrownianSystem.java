@@ -36,6 +36,7 @@ public class BrownianSystem {
         } else {
             updateParticleVelocityWithWall(collision);
         }
+        exportStates(particles,collision.getTime(),pathDy);
     }
 
     private static void updateParticleVelocity(Particle p1, Particle p2) {
@@ -70,7 +71,7 @@ public class BrownianSystem {
         double posX1, posY1;
         posX1 = particle.getPosition().getX();
         posY1 = particle.getPosition().getY();
-        particle.setPosition(new Position(posX1 + particle.getV() * Math.cos(particle.getTheta()) * minTime, posY1 + particle.getV() * Math.sin(particle.getTheta()) * minTime));
+        particle.setPosition(new Position(posX1 + particle.getVx(), posY1 + particle.getVy()));
     }
 
     public static Collision calculateNextCollision(List<Particle> particleList, int L) {
@@ -170,7 +171,7 @@ public class BrownianSystem {
         try {
             bf = new BufferedWriter(new FileWriter(file, true));
             for (Particle p : particles) {
-                bf.write(p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getTheta() + "\s" + p.getV() + "\n");
+                bf.write(p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getVx() + "\s" + p.getVy() + "\n");
             }
             bf.flush();
         } catch (IOException e) {
@@ -186,13 +187,3 @@ public class BrownianSystem {
         }
     }
 }
-
-/*
-0 1 2 3 4
-
--- 01 02 03 04
--- -- 12 13 14
--- -- -- 23 24
--- -- -- -- 34
-
- */
