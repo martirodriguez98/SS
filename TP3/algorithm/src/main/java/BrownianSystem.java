@@ -75,7 +75,7 @@ public class BrownianSystem {
         double posX1, posY1;
         posX1 = particle.getPosition().getX();
         posY1 = particle.getPosition().getY();
-        particle.setPosition(new Position(posX1 + particle.getVx(), posY1 + particle.getVy()));
+        particle.setPosition(new Position(posX1 + particle.getVx()*minTime, posY1 + particle.getVy()*minTime));
     }
 
     public static Collision calculateNextCollision(List<Particle> particleList, int L) {
