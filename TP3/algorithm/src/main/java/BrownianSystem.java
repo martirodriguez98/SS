@@ -8,6 +8,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,18 +21,25 @@ public class BrownianSystem {
         - actualizar las colisiones de todas las que involucran a las del choque
         - a las demas se les resta el tiempo del choque
      */
-    public static void algorithm(List<Particle> particles, int L, int iterations, String pathDy) {
+    public static List<List<Double>> algorithm(List<Particle> particles, int L, int iterations, String pathDy) {
         int i = 0;
         List<Double> timeHistory = new LinkedList<>();
+        List<Double> minTimes = new LinkedList<>();
+        List<List<Double>> timeData = new ArrayList<>();
+
         timeHistory.add(0.0);
         boolean bigParticleHit = false;
         while (!bigParticleHit && i < iterations) {
             Collision minTimeCollision = calculateNextCollision(particles, L);
             timeHistory.add(minTimeCollision.getTime() + timeHistory.get(timeHistory.size() - 1));
+            minTimes.add(minTimeCollision.getTime());
             updateStates(minTimeCollision, particles, L, pathDy, timeHistory);
             bigParticleHit = findBigParticlePosition(particles.get(0), L);
             i++;
         }
+        timeData.add(minTimes);
+        timeData.add(timeHistory);
+        return timeData;
     }
 
     public static void updateStates(Collision collision, List<Particle> particles, int L, String pathDy, List<Double> timeHistory) {
