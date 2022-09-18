@@ -141,6 +141,7 @@ public class BrownianSystem {
             if (Double.compare(closestTimeX, 0) == 0 && Double.compare(closestTimeY, 0) == 0) {
                 return new WallCollision(null, Double.MAX_VALUE);
             }
+            return new WallCollision(Walls.CORNER, closestTimeX);
         }
 
         // If no vertical intersection then horizontal
@@ -149,7 +150,7 @@ public class BrownianSystem {
             if (Double.compare(closestTimeY, 0) == 0) {
                 return new WallCollision(null, Double.MAX_VALUE);
             }
-            return new WallCollision(Walls.TOP, closestTimeY);
+            return new WallCollision(Walls.TOPBOT, closestTimeY);
         }
 
         // If no horizontal intersection then vertical
@@ -158,7 +159,7 @@ public class BrownianSystem {
             if (Double.compare(closestTimeX, 0) == 0) {
                 return new WallCollision(null, Double.MAX_VALUE);
             }
-            return new WallCollision(Walls.LEFT, closestTimeX);
+            return new WallCollision(Walls.RL, closestTimeX);
         }
 
         // Discard previous collision
@@ -172,17 +173,20 @@ public class BrownianSystem {
         }
 
         return closestTimeX < closestTimeY ?
-                new WallCollision(Walls.LEFT, closestTimeX)
+                new WallCollision(Walls.RL, closestTimeX)
                 :
-                new WallCollision(Walls.TOP, closestTimeY);
+                new WallCollision(Walls.TOPBOT, closestTimeY);
 
     }
 
     private static void updateParticleVelocityWithWall(Collision collision) {
         Walls wall = collision.getWall();
-        if (wall == Walls.TOP || wall == Walls.BOTTOM) {
+        if (wall == Walls.TOPBOT) {
+            collision.getP1().setVy(-collision.getP1().getVy());
+        } else if(wall == Walls.RL){
             collision.getP1().setVx(-collision.getP1().getVx());
-        } else {
+        }else{
+            collision.getP1().setVx(-collision.getP1().getVx());
             collision.getP1().setVy(-collision.getP1().getVy());
         }
     }
