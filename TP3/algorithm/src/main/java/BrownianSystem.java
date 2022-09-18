@@ -24,7 +24,7 @@ public class BrownianSystem {
         List<Double> timeHistory = new LinkedList<>();
         timeHistory.add(0.0);
         boolean bigParticleHit = false;
-        while (!bigParticleHit || i < iterations) {
+        while (!bigParticleHit && i < iterations) {
             Collision minTimeCollision = calculateNextCollision(particles, L);
             timeHistory.add(minTimeCollision.getTime() + timeHistory.get(timeHistory.size() - 1));
             updateStates(minTimeCollision, particles, L, pathDy, timeHistory);
