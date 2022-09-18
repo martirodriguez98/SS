@@ -32,14 +32,16 @@ public class BrownianSystem {
     }
 
     public static void updateStates(Collision collision, List<Particle> particles, int L, String pathDy, List<Double> timeHistory) {
+        for (Particle particle : particles) {
+            updateParticlePosition(particle, collision.getTime());
+        }
+        
         if (!collision.isWall()) {
             updateParticleVelocity(collision.getP1(), collision.getP2());
         } else {
             updateParticleVelocityWithWall(collision);
         }
-        for (Particle particle : particles) {
-            updateParticlePosition(particle, collision.getTime());
-        }
+
 
         exportStates(particles, pathDy, timeHistory);
     }
