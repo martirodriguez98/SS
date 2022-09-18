@@ -84,17 +84,18 @@ public class BrownianSystem {
         Collision minTimeCollision = null;
         double minTime = Double.MAX_VALUE;
         for (int i = 0; i < particleList.size(); i++) {
+            WallCollision wallTime = calculateCollisionTimeWall(particleList.get(i), L);
+            if(Double.compare(wallTime.time, minTime) <= 0){
+                minTime = wallTime.time;
+                minTimeCollision = new Collision(minTime, particleList.get(i), wallTime.wallType);
+            }
+
             for (int j = 0; j < particleList.size(); j++) {
                 if (i != j) {
                     double particleTime = calculateCollisionTime(particleList.get(i), particleList.get(j));
-                    WallCollision wallTime = calculateCollisionTimeWall(particleList.get(i), L);
                     if (Double.compare(particleTime, minTime) <= 0) {
                         minTime = particleTime;
                         minTimeCollision = new Collision(minTime, particleList.get(i), particleList.get(j));
-                    }
-                    if (Double.compare(wallTime.time, minTime) <= 0) {
-                        minTime = particleTime;
-                        minTimeCollision = new Collision(minTime, particleList.get(i), wallTime.wallType);
                     }
                 }
             }
