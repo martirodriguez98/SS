@@ -35,13 +35,12 @@ public class BrownianSystem {
         for (Particle particle : particles) {
             updateParticlePosition(particle, collision.getTime());
         }
-        
+
         if (!collision.isWall()) {
             updateParticleVelocity(collision.getP1(), collision.getP2());
         } else {
             updateParticleVelocityWithWall(collision);
         }
-
 
         exportStates(particles, pathDy, timeHistory);
     }
@@ -89,11 +88,11 @@ public class BrownianSystem {
                 if (i != j) {
                     double particleTime = calculateCollisionTime(particleList.get(i), particleList.get(j));
                     WallCollision wallTime = calculateCollisionTimeWall(particleList.get(i), L);
-                    if (Double.compare(particleTime, minTime) < 0) {
+                    if (Double.compare(particleTime, minTime) <= 0) {
                         minTime = particleTime;
                         minTimeCollision = new Collision(minTime, particleList.get(i), particleList.get(j));
                     }
-                    if (Double.compare(wallTime.time, minTime) < 0) {
+                    if (Double.compare(wallTime.time, minTime) <= 0) {
                         minTime = particleTime;
                         minTimeCollision = new Collision(minTime, particleList.get(i), wallTime.wallType);
                     }
