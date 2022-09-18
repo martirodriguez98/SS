@@ -25,7 +25,7 @@ public class BrownianSystem {
         timeHistory.add(0.0);
         while (i < iterations) {
             Collision minTimeCollision = calculateNextCollision(particles, L);
-            timeHistory.add(minTimeCollision.getTime()+timeHistory.get(timeHistory.size()-1));
+            timeHistory.add(minTimeCollision.getTime() + timeHistory.get(timeHistory.size() - 1));
             updateStates(minTimeCollision, particles, L, pathDy, timeHistory);
             i++;
         }
@@ -81,39 +81,99 @@ public class BrownianSystem {
     public static Collision calculateNextCollision(List<Particle> particleList, int L) {
         Collision minTimeCollision = null;
         double minTime = Double.MAX_VALUE;
-        for (int i = 0; i < particleList.size() - 1; i++) {
-            for (int j = i + 1; j < particleList.size(); j++) {
-                double particleTime = calculateCollisionTime(particleList.get(i), particleList.get(j));
-                WallCollision wallTime = calculateCollisionTimeWall(particleList.get(i), L);
-                if (Double.compare(particleTime, minTime) < 0) {
-                    minTime = particleTime;
-                    minTimeCollision = new Collision(minTime, particleList.get(i), particleList.get(j));
-                }
-                if (Double.compare(wallTime.time, minTime) < 0) {
-                    minTime = particleTime;
-                    minTimeCollision = new Collision(minTime, particleList.get(i), wallTime.wallType);
+        for (int i = 0; i < particleList.size(); i++) {
+            for (int j = 0; j < particleList.size(); j++) {
+                if (i != j) {
+                    double particleTime = calculateCollisionTime(particleList.get(i), particleList.get(j));
+                    WallCollision wallTime = calculateCollisionTimeWall(particleList.get(i), L);
+                    if (Double.compare(particleTime, minTime) < 0) {
+                        minTime = particleTime;
+                        minTimeCollision = new Collision(minTime, particleList.get(i), particleList.get(j));
+                    }
+                    if (Double.compare(wallTime.time, minTime) < 0) {
+                        minTime = particleTime;
+                        minTimeCollision = new Collision(minTime, particleList.get(i), wallTime.wallType);
+                    }
                 }
             }
         }
         return minTimeCollision;
     }
 
+
     private static WallCollision calculateCollisionTimeWall(Particle p1, int L) {
-        double vx = p1.getVx();
-        double vy = p1.getVy();
-        double x = p1.getPosition().getX();
-        double y = p1.getPosition().getY();
-        double r = p1.getRadio();
-        if (vx > 0) {
-            return new WallCollision(Walls.RIGHT, (L - r - x) / vx);
-        } else if (vx < 0) {
-            return new WallCollision(Walls.LEFT, (0 - r - x) / vx);
+        if (p1.getVx() == 0 && p1.getVy() == 0) {
+            return new WallCollision(null, Double.MAX_VALUE);
         }
-        if (vy > 0) {
-            return new WallCollision(Walls.TOP, (L - r - y) / vy);
-        } else {
-            return new WallCollision(Walls.BOTTOM, (0 - r - y) / vy);
+
+        //Check vertical walls
+        Double closestTimeX = null;
+        if (p1.getVx() != 0) {
+            if (p1.getVx() > 0) {
+                closestTimeX = (L - p1.getRadio() - p1.getPosition().getX()) / p1.getVx();
+            } else {
+                closestTimeX = (p1.getRadio() - p1.getPosition().getX()) / p1.getVx();
+            }
         }
+
+        if (closestTimeX != null && closestTimeX < 0) {
+            throw new RuntimeException();
+        }
+
+        //Check horizontal walls
+        Double closestTimeY = null;
+        if (p1.getVy() != 0) {
+            if (p1.getVy() > 0) {
+                closestTimeY = (L - p1.getRadio() - p1.getPosition().getY()) / p1.getVy();
+            } else {
+                closestTimeY = (p1.getRadio() - p1.getPosition().getY()) / p1.getVy();
+            }
+        }
+
+        if (closestTimeY != null && closestTimeY < 0) {
+            throw new RuntimeException();
+        }
+
+        // Check wall corner
+        if (closestTimeX != null && closestTimeX.equals(closestTimeY)) {
+            if (Double.compare(closestTimeX, 0) == 0 && Double.compare(closestTimeY, 0) == 0) {
+                return new WallCollision(null, Double.MAX_VALUE);
+            }
+        }
+
+        // If no vertical intersection then horizontal
+        if (closestTimeX == null) {
+            // Discard previous collision
+            if (Double.compare(closestTimeY, 0) == 0) {
+                return new WallCollision(null, Double.MAX_VALUE);
+            }
+            return new WallCollision(Walls.TOP, closestTimeY);
+        }
+
+        // If no horizontal intersection then vertical
+        else if (closestTimeY == null) {
+            // Discard previous collision
+            if (Double.compare(closestTimeX, 0) == 0) {
+                return new WallCollision(null, Double.MAX_VALUE);
+            }
+            return new WallCollision(Walls.LEFT, closestTimeX);
+        }
+
+        // Discard previous collision
+        if (Double.compare(closestTimeX, 0) == 0) {
+            closestTimeX = Double.POSITIVE_INFINITY;
+        }
+
+        // Discard previous collision
+        if (Double.compare(closestTimeY, 0) == 0) {
+            closestTimeY = Double.POSITIVE_INFINITY;
+        }
+
+        return closestTimeX < closestTimeY ?
+                new WallCollision(Walls.LEFT, closestTimeX)
+                :
+                new WallCollision(Walls.TOP, closestTimeY);
+
     }
 
     private static void updateParticleVelocityWithWall(Collision collision) {
@@ -143,27 +203,35 @@ public class BrownianSystem {
     }
 
     private static double calculateCollisionTime(Particle p1, Particle p2) {
-        double dx = p1.getPosition().getX() - p2.getPosition().getX();
-        double dy = p1.getPosition().getY() - p2.getPosition().getY();
-        double dvx = p1.getVx() - p2.getVx();
-        double dvy = p1.getVy() - p2.getVy();
-        double dvr = dx * dvx + dy * dvy;
-        double sigma = p1.getRadio() + p2.getRadio();
-        double dr = Math.pow(dx, 2) + Math.pow(dy, 2);
-        double dv = Math.pow(dvx, 2) + Math.pow(dvy, 2);
-        double d = Math.pow(dvr, 2) - dv * (dr - Math.pow(sigma, 2));
+        final double deltaX = p2.getPosition().getX() - p1.getPosition().getX();
+        final double deltaY = p2.getPosition().getY() - p1.getPosition().getY();
+        final double deltaVx = p2.getVx() - p1.getVx();
+        final double deltaVy = p2.getVy() - p1.getVy();
+
+        final double dvr = deltaVx * deltaX + deltaVy * deltaY;
 
         if (dvr >= 0) {
             return Double.MAX_VALUE;
         }
+
+        final double rr = Math.pow(deltaX, 2) + Math.pow(deltaY, 2);
+        final double vv = Math.pow(deltaVx, 2) + Math.pow(deltaVy, 2);
+        final double sigma = p1.getRadio() + p2.getRadio();
+
+        final double d = Math.pow(dvr, 2) - vv * (rr - Math.pow(sigma, 2));
         if (d < 0) {
             return Double.MAX_VALUE;
         }
 
-        double collisionTime = -((dvr + Math.sqrt(d)) / (dv));
+        final double collisionTime = -(dvr + Math.sqrt(d)) / vv;
 
-        if (collisionTime < 0) {
-            throw new RuntimeException();
+
+        try {
+            if (collisionTime < 0) {
+                throw new RuntimeException();
+            }
+        } catch (RuntimeException e) {
+            System.out.println("Soy una hija de re mil puta");
         }
 
         return collisionTime;
@@ -175,7 +243,7 @@ public class BrownianSystem {
         try {
             bf = new BufferedWriter(new FileWriter(file, true));
 
-            bf.write(timeHistory.get(timeHistory.size()-1) + "\n");
+            bf.write(timeHistory.get(timeHistory.size() - 1) + "\n");
             for (Particle p : particles) {
                 bf.write(p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getVx() + "\s" + p.getVy() + "\n");
             }
