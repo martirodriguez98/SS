@@ -32,14 +32,15 @@ public class BrownianSystem {
     }
 
     public static void updateStates(Collision collision, List<Particle> particles, int L, String pathDy, List<Double> timeHistory) {
-        for (Particle particle : particles) {
-            updateParticlePosition(particle, collision.getTime());
-        }
         if (!collision.isWall()) {
             updateParticleVelocity(collision.getP1(), collision.getP2());
         } else {
             updateParticleVelocityWithWall(collision);
         }
+        for (Particle particle : particles) {
+            updateParticlePosition(particle, collision.getTime());
+        }
+
         exportStates(particles, pathDy, timeHistory);
     }
 
@@ -116,9 +117,9 @@ public class BrownianSystem {
             }
         }
 
-        if (closestTimeX != null && closestTimeX < 0) {
-            throw new RuntimeException();
-        }
+//        if (closestTimeX != null && closestTimeX < 0) {
+//            throw new RuntimeException();
+//        }
 
         //Check horizontal walls
         Double closestTimeY = null;
@@ -130,9 +131,9 @@ public class BrownianSystem {
             }
         }
 
-        if (closestTimeY != null && closestTimeY < 0) {
-            throw new RuntimeException();
-        }
+        //if (closestTimeY != null && closestTimeY < 0) {
+          //  throw new RuntimeException();
+        //}
 
         // Check wall corner
         if (closestTimeX != null && closestTimeX.equals(closestTimeY)) {
@@ -231,7 +232,7 @@ public class BrownianSystem {
                 throw new RuntimeException();
             }
         } catch (RuntimeException e) {
-            System.out.println("Soy una hija de re mil puta");
+
         }
 
         return collisionTime;

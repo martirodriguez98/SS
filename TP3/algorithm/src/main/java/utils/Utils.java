@@ -31,9 +31,10 @@ public class Utils {
                 for (Particle particle : createdParticles) {
                     double positionX = Math.pow(p.getPosition().getX() - particle.getPosition().getX(), 2);
                     double positionY = Math.pow(p.getPosition().getY() - particle.getPosition().getY(), 2);
-                    double radios = Math.pow(p.getRadio() - particle.getRadio(), 2);
+                    double radios = Math.pow(p.getRadio()  + particle.getRadio(), 2);
                     if (positionX + positionY <= radios) {
                         success = false;
+                        break;
                     }
                 }
 
