@@ -23,10 +23,12 @@ public class BrownianSystem {
         int i = 0;
         List<Double> timeHistory = new LinkedList<>();
         timeHistory.add(0.0);
-        while (i < iterations) {
+        boolean bigParticleHit = false;
+        while (!bigParticleHit || i < iterations) {
             Collision minTimeCollision = calculateNextCollision(particles, L);
             timeHistory.add(minTimeCollision.getTime() + timeHistory.get(timeHistory.size() - 1));
             updateStates(minTimeCollision, particles, L, pathDy, timeHistory);
+            bigParticleHit = findBigParticlePosition(particles.get(0), L);
             i++;
         }
     }
@@ -203,10 +205,10 @@ public class BrownianSystem {
 
     }
 
-    private static boolean bigParticleInWall(Particle particle, int L) {
-        double posX = particle.getPosition().getX() + particle.getRadio();
-        double posY = particle.getPosition().getY() + particle.getRadio();
-        return posX == 0 || Math.abs(posX - L) <= 0.01 || posY == 0 || Math.abs(posY - L) <= 0.01; // TODO fijarse si el error es suficiente o es mucho
+    private static boolean findBigParticlePosition(Particle particle, int L) {
+        double posX = particle.getPosition().getX();
+        double posY = particle.getPosition().getY();
+        return posX <= particle.getRadio() || posX >= L - particle.getRadio() || posY <= particle.getRadio() || posY >= L-particle.getRadio();
     }
 
     private static double calculateCollisionTime(Particle p1, Particle p2) {
