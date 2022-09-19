@@ -32,8 +32,10 @@ def get_particle_data(static_file, dynamic_file):
     st_df = pd.read_csv(static_file, sep=" ", skiprows=2, names=["r", "mass"])
 
     dynamic_df = []
+    count = 0
+    prev_time =0
     with open(dynamic_file, "r") as dynamic:
-        next(dynamic)
+        # next(dynamic)
         dynamic_lines = []
         for line in dynamic:
             ll = line.split()
@@ -43,11 +45,17 @@ def get_particle_data(static_file, dynamic_file):
             if len(line_info) > 1:
                 dynamic_lines.append(line_info)
             elif len(line_info) == 1:
-                df = pd.DataFrame(np.array(dynamic_lines), columns=["x", "y", "z", "vx", "vy"])
-                dynamic_df.append(pd.concat([df, st_df], axis=1))
-                dynamic_lines = []
+                if count == 0:
+                    prev_time = line_info[0]
+                    count+=1
+                else:
+                    df = pd.DataFrame(np.array(dynamic_lines), columns=["x", "y", "z", "vx", "vy"])
+                    dynamic_df.append(tuple([prev_time,pd.concat([df, st_df], axis=1)]))
+                    dynamic_lines = []
+                    prev_time = line_info[0]
         df = pd.DataFrame(np.array(dynamic_lines), columns=["x", "y", "z", "vx", "vy"])
-        dynamic_df.append(pd.concat([df, st_df], axis=1))
+        dynamic_df.append(tuple([line_info[0],pd.concat([df, st_df], axis=1)]))
+
 
     return dynamic_df
 
@@ -58,4 +66,5 @@ def get_particles(data_frame):
     particles.create_property("Radius", data=data_frame.r)
     particles.create_property("angle", data=np.arctan(data_frame.vy,data_frame.vx))
     particles.create_property("Force", data=np.array((data_frame.vx, data_frame.vy, np.zeros(len(data_frame.x)))).T)
+
     return particles

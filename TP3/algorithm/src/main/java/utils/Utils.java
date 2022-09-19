@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Utils {
 
-    public static List<Particle> generateParticles(int n, double radio, double mass, int L, double speed, double bigRadio, double bigMass, double bigSpeed, String pathSt, String pathDy) {
+    public static List<Particle> generateParticles(int n, double radio, double mass, int L, double minSpeed, double maxSpeed, double bigRadio, double bigMass, double bigSpeed, String pathSt, String pathDy) {
 
         List<String> staticFile = new LinkedList<>();
         List<String> dynamicFile = new LinkedList<>();
@@ -26,7 +26,7 @@ public class Utils {
         while (createdParticlesCount < n + 1) {
             while (!success) {
                 success = true;
-                Particle p = Particle.randomParticle(randGen, createdParticlesCount, radio, speed, L, mass);
+                Particle p = Particle.randomParticle(randGen, createdParticlesCount, radio, minSpeed, maxSpeed, L, mass);
 
                 for (Particle particle : createdParticles) {
                     double positionX = Math.pow(p.getPosition().getX() - particle.getPosition().getX(), 2);

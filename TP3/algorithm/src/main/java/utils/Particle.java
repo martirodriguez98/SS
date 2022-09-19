@@ -105,10 +105,10 @@ public class Particle {
         return "" + id + " - " + this.position.toString();
     }
 
-    public static Particle randomParticle(final Random randomGen, final int id, final double radio, final double speed, final int L, final double mass) {
+    public static Particle randomParticle(final Random randomGen, final int id, final double radio, final double minSpeed, final double maxSpeed, final int L, final double mass) {
         double x = randDouble(randomGen, radio, L-radio);
         double y = randDouble(randomGen, radio, L-radio);
-        double v = randDouble(randomGen, 0, speed);
+        double v = randDouble(randomGen, minSpeed, maxSpeed);
         double theta = randDouble(randomGen, -Math.PI, Math.PI);
         return new Particle(id, radio, mass, new Position(x,y), v*Math.cos(theta), v*Math.sin(theta));
     }

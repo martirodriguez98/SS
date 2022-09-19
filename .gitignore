@@ -1460,3 +1460,5 @@ TP2/visualization/.idea/vcs.xml
 TP2/visualization/.idea/visualization.iml
 
 TP2/visualization/.idea/workspace.xml
+
+*.dump
