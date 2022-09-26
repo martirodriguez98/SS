@@ -2,7 +2,8 @@ from ovito_visualization import get_particle_data
 import pandas as pd
 import numpy as np
 
-from plots import plot_small_particles_speed_distribution, plot_avg_collision_time, plot_big_particle_route
+from plots import plot_small_particles_speed_distribution, plot_avg_collision_time, plot_big_particle_route, \
+    plot_big_particle_coeff_distribution
 
 
 def ej1():
@@ -33,8 +34,9 @@ def ej2():
     plot_small_particles_speed_distribution(speeds_ns, Ns)
 
 def ej3():
-    # speeds_values = [2,3,4]
-    speeds_values = [4]
+    L = 6
+    speeds_values = [2,3,4]
+    # speeds_values = [4]
 
     radio = 0
     kinetik_energy = 0
@@ -46,20 +48,29 @@ def ej3():
         big_particle_pos.insert(i,[])
 
         for df in particles_data:
+            if df[1]['mass'][0] == 2.0:
+                radio = df[1]['r'][0]
+                big_particle_pos[i].append([df[1]["x"][0],df[1]["y"][0]])
+    plot_big_particle_route(big_particle_pos,radio, L)
+
+def ej4_big_p():
+    n=125
+    data = []
+    runs = []
+    for i in range(25):
+        static_file = f'/Users/martirodriguez/Documents/ITBA/SS/SS/TP3/algorithm/src/main/resources/static_{n}_{i}.txt'
+        dynamic_file = f'/Users/martirodriguez/Documents/ITBA/SS/SS/TP3/algorithm/src/main/resources/dynamic_{n}_{i}.txt'
+        particles_data = get_particle_data(static_file, dynamic_file)
+        runs.append(i)
+        data.insert(i,[])
+        for df in particles_data:
             if df[1]['mass'][1] == 2.0:
-                radio = df[1]['r'][1]
-                positions = df[1][["x","y"]]
-                print(positions)
+                data[i].append([df[0],df[1]["x"][0],df[1]["y"][0]])
+    print(data)
+    plot_big_particle_coeff_distribution(data, runs)
 
-                big_particle_pos[i].append(df[1][["x","y"]].values.flatten())
-                kinetik_energy = np.sum((1/2) * df[1]['mass'][1] * (np.linalg.norm(df[1][["vx","vy"]],axis=1) ** 2))
-    print(big_particle_pos)
-    plot_big_particle_route(big_particle_pos, kinetik_energy,radio)
-
-def ej4():
-    pass
 
 if __name__ == '__main__':
-    ej3()
+    ej4_big_p()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

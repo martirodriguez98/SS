@@ -11,7 +11,7 @@ import static utils.Utils.generateParticles;
 
 public class Test {
     public static void main(String[] args) {
-        ej3();
+        ej4();
     }
 
     private static void ej1(){
@@ -81,6 +81,25 @@ public class Test {
             List<Particle> particles = generateParticles(n, radio, mass, L, i == 0 ? 0 : speeds.get(i-1),speeds.get(i), bigRadio, bigMass, bigSpeed, pathSt, pathDy);
             BrownianSystem.algorithm(particles, L, iterations, pathDy);
         }
+    }
+
+    private static void ej4(){
+        int n=125;
+        double radio = 0.2, bigRadio = 0.7;
+        double mass = 0.9, bigMass = 2;
+        int L = 6;
+        double bigSpeed = 0;
+        double speed = 2;
+        int iterations = 50000;
+        int runs = 25;
+        for(int i=0 ; i < runs ; i++){
+            String pathSt = "src/main/resources/static_" + n + "_" + i + ".txt";
+            String pathDy = "src/main/resources/dynamic_" + n + "_" + i + ".txt";
+            List<Particle> particles = generateParticles(n, radio, mass, L, 0,speed, bigRadio, bigMass, bigSpeed, pathSt, pathDy);
+            BrownianSystem.algorithm(particles, L, iterations, pathDy);
+        }
+
+
     }
 
 
