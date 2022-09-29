@@ -1528,3 +1528,15 @@ TP4/visualization/.idea/workspace.xml
 TP4/algorithm/src/main/resources/analytic.txt
 
 TP4/algorithm/src/main/resources/verlet.txt
+
+TP4/algorithm/src/main/resources/auxverlet.txt
+
+TP4/algorithm/src/main/resources/beeman.txt
+
+TP4/algorithm/src/main/resources/gear.txt
+
+TP4/algorithm/target/classes/analytic.txt
+
+TP4/algorithm/target/classes/auxverlet.txt
+
+TP4/algorithm/target/classes/beeman.txt

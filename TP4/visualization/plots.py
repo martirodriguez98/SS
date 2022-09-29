@@ -1,15 +1,19 @@
-from pandas import DataFrame
+
 import plotly.graph_objects as go
 
 
-def plot(algorithm: DataFrame, analytic: DataFrame, title):
+def plot(all_states, title, legends):
     data = []
-
-    for row in algorithm.iterrows():
+    for i in range(len(all_states)):
+        x = []
+        y = []
+        for row in all_states[i].iterrows():
+            x.append(row[1]['t'])
+            y.append(row[1]['x'])
         data.append(go.Scatter(
-            x = row["t"],
-            y = row["x"],
-            name = 'HOLIS',
+            x = x,
+            y = y,
+            name = f'{legends[i]}',
             mode='lines'
         )),
 
@@ -19,7 +23,8 @@ def plot(algorithm: DataFrame, analytic: DataFrame, title):
             title=dict(text=f'{title}'),
             xaxis=dict(title="Time"),
             yaxis=dict(title="Position")
-        )
+        ),
     )
     fig.update_layout(width=1000, height=1000)
+
     fig.show()
