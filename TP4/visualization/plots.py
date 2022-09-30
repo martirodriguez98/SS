@@ -14,7 +14,8 @@ def plot(all_states, title, legends):
             x = x,
             y = y,
             name = f'{legends[i]}',
-            mode='lines'
+            mode='lines',
+            line={'dash':'dash'}
         )),
 
     fig = go.Figure(
@@ -25,6 +26,25 @@ def plot(all_states, title, legends):
             yaxis=dict(title="Position")
         ),
     )
-    fig.update_layout(width=1000, height=1000)
 
+    fig.show()
+
+def plot_error(algorithm_name, all_errors, deltas):
+    data = []
+    for i,errors in enumerate(all_errors):
+        data.append(go.Scatter(
+            x = deltas,
+            y = errors,
+            name = f'{algorithm_name[i]}',
+            mode='lines+markers',
+        ))
+    fig = go.Figure(
+        data = data,
+        layout = go.Layout(
+            title = dict(text=f'Error para {algorithm_name}'),
+            xaxis=dict(title="Deltas"),
+            yaxis=dict(title="Error cuadrático medio (m^2)")
+        )
+    )
+    fig.update_layout(xaxis_type="log", yaxis_type="log")
     fig.show()
