@@ -20,7 +20,7 @@ public class ResultsMission {
             try{
                 bf = new BufferedWriter(new FileWriter(file));
                 for(State state : entry.getValue()){
-                    bf.write(state.getTime() + "," + state.getX() + "," + state.getVx() + "\n");
+                    bf.write(state.getTime() + "," + state.getX() + "," + state.getY() +"," + 0 + "," + state.getVx() + "," + state.getVy() + "\n");
                 }
                 bf.flush();
             }catch (IOException e){
