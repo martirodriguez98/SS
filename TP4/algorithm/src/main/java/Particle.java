@@ -1,3 +1,6 @@
+import java.util.Collection;
+import java.util.Collections;
+
 public class Particle {
     private double x;
     private double y;
@@ -21,6 +24,24 @@ public class Particle {
         this.vx = vx;
         this.vy = vy;
         this.radio = radio;
+    }
+
+    public Pair getForce(Collection<Particle> particles, Double G) {
+        double forceX = 0;
+        double forceY = 0;
+        for (Particle p : particles) {
+            if (p != this) {
+                double m = p.getM() * this.getM();
+                double distance = Math.sqrt(Math.pow(p.getX() - this.getX(), 2) + Math.pow(p.getY() - this.getY(), 2));
+                double distanceX = (p.getX() - this.getX());
+                double distanceY = (p.getY() - this.getY());
+                double eX = distanceX / distance;
+                double eY = distanceY / distance;
+                forceX += G * m * eX / Math.pow(distance, 2);
+                forceY += G * m * eY / Math.pow(distance, 2);
+            }
+        }
+        return new Pair(forceX, forceY);
     }
 
     public String getName() {
