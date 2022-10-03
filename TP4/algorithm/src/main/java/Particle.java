@@ -1,5 +1,4 @@
 import java.util.Collection;
-import java.util.Collections;
 
 public class Particle {
     private double x;

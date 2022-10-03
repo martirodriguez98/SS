@@ -23,8 +23,10 @@ public class TestMission {
 
         //radio 100 to visualize in ovito
         particles.put("SPACESHIP", new Particle("SPACESHIP", 2*Math.pow(10,5),100, spaceshipX, spaceshipY, spaceshipVx, spaceshipVy));
-        particles.values().forEach(System.out::println);
-        //tierra propulsion orbital
-        //calcular v tangencial inicial de la nave sumando todas las v, despues pasar a x e y
+
+        double finalTime = 5;
+        double dt = 0.001;
+        ResultsMission resultsMission = GearPredictorCorrector.runMissionGear(particles, finalTime, dt);
+        resultsMission.exportResults("results_");
     }
 }
