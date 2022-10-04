@@ -23,10 +23,10 @@ public class TestMission {
 
         //radio 100 to visualize in ovito
         particles.put("SPACESHIP", new Particle("SPACESHIP", 2*Math.pow(10,5),100, spaceshipX, spaceshipY, spaceshipVx, spaceshipVy));
-
+        Parser.addSpaceshipData("static_file.txt", particles.values().stream().toList());
         double finalTime = 5;
         double dt = 0.001;
         ResultsMission resultsMission = GearPredictorCorrector.runMissionGear(particles, finalTime, dt);
-        resultsMission.exportResults("results_");
+        resultsMission.exportResults("results.txt");
     }
 }

@@ -54,17 +54,17 @@ public class GearPredictorCorrector {
     }
 
     public static ResultsMission runMissionGear(Map<String, Particle> particlesMap, final double finalTime, final double dt) {
-        final Map<Particle, List<State>> initialStates = new HashMap<>();
+        final Map<Particle, List<State>> initialStates = new TreeMap<>();
         //initial states
         for (Particle p : particlesMap.values()) {
             initialStates.putIfAbsent(p, new LinkedList<>());
-            initialStates.get(p).add(new State(0, p.getX(), p.getY(), p.getVx(), p.getVy()));
+            initialStates.get(p).add(new State(p.getName(),0.0, p.getX(), p.getY(), p.getVx(), p.getVy()));
         }
 
         int iterations = 0;
 
         final Map<Particle, R> initialRs = calculateInitialRs(initialStates);
-        final Map<Particle, List<State>> states = new HashMap<>();
+        final Map<Particle, List<State>> states = new TreeMap<>();
         saveStates(states, initialRs, 0);
 
         Map<Particle, R> currentRs = initialRs;
@@ -79,7 +79,7 @@ public class GearPredictorCorrector {
     }
 
     private static Map<Particle, R> predict(Map<Particle, R> currentRs, final double dt) {
-        final Map<Particle, R> predictions = new HashMap<>();
+        final Map<Particle, R> predictions = new TreeMap<>();
         currentRs.forEach((particle, r) -> {
             final R prediction = new R();
             for (int i = 0; i < 6; i++) { //r0 .. r5
@@ -98,7 +98,7 @@ public class GearPredictorCorrector {
     }
 
     private static Map<Particle, Pair> getDeltasR2(Map<Particle, R> predictionsRs, double dt){
-        Map<Particle, Pair> deltaR2 = new HashMap<>();
+        Map<Particle, Pair> deltaR2 = new TreeMap<>();
         predictionsRs.forEach((particle, r) -> {
             final Pair r2 = calculateForce(particle, r.get(0), predictionsRs);
             final double r2x = r.get(2).getX();
@@ -113,7 +113,7 @@ public class GearPredictorCorrector {
     }
 
     private static Map<Particle, R> correct(Map<Particle, R> predictions, final Map<Particle, Pair> deltasR2, final double dt){
-        final Map<Particle, R> corrections = new HashMap<>();
+        final Map<Particle, R> corrections = new TreeMap<>();
         predictions.forEach((particle, r) -> {
             final R correction = new R();
             for (int i = 0; i < 6 ; i++){
@@ -136,7 +136,7 @@ public class GearPredictorCorrector {
     }
 
     private static Map<Particle, R> calculateInitialRs(Map<Particle, List<State>> initialStates) {
-        final Map<Particle, R> rs = new HashMap<>();
+        final Map<Particle, R> rs = new TreeMap<>();
         initialStates.forEach((particle, state) -> {
             final R r = new R();
             r.add(state.get(0).getX(), state.get(0).getY());
@@ -144,7 +144,7 @@ public class GearPredictorCorrector {
             rs.put(particle, r);
         });
 
-        final Map<Particle, R> initialRs = new HashMap<>();
+        final Map<Particle, R> initialRs = new TreeMap<>();
 
         initialStates.forEach((p, s) -> {
             final R initialR = new R();
@@ -188,7 +188,7 @@ public class GearPredictorCorrector {
             double vx = r.get(1).getX();
             double vy = r.get(1).getY();
             states.putIfAbsent(particle, new LinkedList<>());
-            states.get(particle).add(new State(t, x, y, vx, vy));
+            states.get(particle).add(new State(particle.getName(),t, x, y, vx, vy));
         });
     }
 }

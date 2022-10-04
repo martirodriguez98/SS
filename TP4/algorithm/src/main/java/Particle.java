@@ -1,6 +1,6 @@
 import java.util.Collection;
 
-public class Particle {
+public class Particle implements Comparable<Particle> {
     private double x;
     private double y;
     private double m;
@@ -97,5 +97,10 @@ public class Particle {
 
     public void setVx(double vx) {
         this.vx = vx;
+    }
+
+    @Override
+    public int compareTo(Particle o) {
+        return this.name.compareTo(o.getName());
     }
 }

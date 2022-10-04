@@ -1,22 +1,32 @@
 public class State {
-    private double time;
+    private Double time;
     private double x;
     private double y;
     private double vx;
     private double vy;
+    private String name;
 
-    public State(double time, double x, double vx) {
+    public State(Double time, double x, double vx) {
         this.time = time;
         this.x = x;
         this.vx = vx;
     }
 
-    public State(double time, double x, double y, double vx, double vy) {
+    public State(String name, Double time, double x, double y, double vx, double vy) {
+        this.name = name;
         this.time = time;
         this.x = x;
         this.y = y;
         this.vx = vx;
         this.vy = vy;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getY() {
@@ -35,11 +45,11 @@ public class State {
         this.vy = vy;
     }
 
-    public double getTime() {
+    public Double getTime() {
         return time;
     }
 
-    public void setTime(double time) {
+    public void setTime(Double time) {
         this.time = time;
     }
 

@@ -1650,3 +1650,11 @@ TP4/algorithm/target/classes/verlet_0.001.txt
 TP4/algorithm/target/classes/verlet_0.01.txt
 
 TP4/visualization/__pycache__/export_ovito.cpython-39.pyc
+
+TP4/algorithm/src/main/resources/results.txt
+
+TP4/algorithm/src/main/resources/static_file.txt
+
+TP4/algorithm/target/classes/results.txt
+
+TP4/algorithm/target/classes/static_file.txt
