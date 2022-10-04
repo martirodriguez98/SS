@@ -168,12 +168,12 @@ public class GearPredictorCorrector {
             Particle p = entry.getKey();
             R rs = entry.getValue();
             if (p != currentP) {
-                double m = p.getM() * currentP.getM();
                 double distanceR0X = rs.get(0).getX() - currentPR0.getX();
                 double distanceR0Y = rs.get(0).getY() - currentPR0.getY();
                 double distance = Math.sqrt(Math.pow(distanceR0X, 2) + Math.pow(distanceR0Y, 2));
                 double eX = distanceR0X / distance;
                 double eY = distanceR0Y / distance;
+                double m = p.getM() * currentP.getM();
                 forceX += G * m * eX / Math.pow(distance, 2);
                 forceY += G * m * eY / Math.pow(distance, 2);
             }

@@ -15,8 +15,8 @@ public class TestMission {
         double tx = -ry;
         double ty = rx;
 
-        double spaceshipX = distanceToSpaceship * -rx + earth.getX() + earth.getRadio();
-        double spaceshipY = distanceToSpaceship * -ry + earth.getY() + earth.getRadio();
+        double spaceshipX = (distanceToSpaceship + earth.getRadio()) * -rx + earth.getX();
+        double spaceshipY = (distanceToSpaceship + earth.getRadio()) * -ry + earth.getY();
         double velocity = -7.12 -8 + earth.getVx() * tx + earth.getVy() * ty;
         double spaceshipVx = tx * velocity;
         double spaceshipVy = ty * velocity;
@@ -24,8 +24,8 @@ public class TestMission {
         //radio 100 to visualize in ovito
         particles.put("SPACESHIP", new Particle("SPACESHIP",1, 2*Math.pow(10,5),100, spaceshipX, spaceshipY, spaceshipVx, spaceshipVy));
         Parser.addSpaceshipData("static_file.txt", particles.values().stream().toList());
-        double finalTime = 5;
-        double dt = 0.001;
+        double finalTime = 365 * 24 * 60 * 60;
+        double dt = 300;
         ResultsMission resultsMission = GearPredictorCorrector.runMissionGear(particles, finalTime, dt);
         resultsMission.exportResults("results.txt");
     }

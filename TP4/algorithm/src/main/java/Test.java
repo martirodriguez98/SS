@@ -1,10 +1,8 @@
-import java.math.BigDecimal;
-
 public class Test {
     public static void main(String[] args) {
         double gamma = 100.0;
-        double finalTime = 5.0;
-        double A = 1.0; //todo check
+        double finalTime = 5;
+        double A = 1.0;
         double k = 10000.0;
         double m = 70;
         double v = (-A * gamma)/(2*m);

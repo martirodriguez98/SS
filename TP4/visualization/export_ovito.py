@@ -12,7 +12,7 @@ def export_to_ovito():
     static_file = "static_file.txt"
     dynamic_file = "results.txt"
     export_path = "ovito_results.dump"
-    data_frame = get_particle_data(static_file, dynamic_file)
+    data_frame = get_particle_data(static_file, dynamic_file, step=int(12*60*60/300))
 
     # Create a new Pipeline with a StaticSource as data source:
     pipeline = Pipeline(source=StaticSource(data=DataCollection()))
@@ -35,12 +35,12 @@ def export_to_ovito():
                 multiple_frames=True, start_frame=0, end_frame=len(data_frame) - 1)
 
 
-def get_particle_data(static_file, dynamic_file,step = 1):
+def get_particle_data(static_file, dynamic_file,step):
     st_df = pd.read_csv(static_file, sep=",", skiprows=0, names=["name","radius","mass","x","y","vx","vy"], usecols=["radius","mass"])
-    st_df.radius[0] = 1000000
-    st_df.radius[1] = 70000
-    st_df.radius[2] = 300000
-    st_df.radius[3] = 80000
+    st_df.radius[0] = 1000
+    st_df.radius[1] = 700
+    st_df.radius[2] = 3000
+    st_df.radius[3] = 800
 
     dfs = []
     with open(dynamic_file, "r") as results:
