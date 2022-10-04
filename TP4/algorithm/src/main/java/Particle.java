@@ -7,6 +7,7 @@ public class Particle implements Comparable<Particle> {
     private double vx;
     private double vy;
     private double radio;
+    private int id;
     private String name;
 
     public Particle(double x, double m, double vx) {
@@ -15,7 +16,8 @@ public class Particle implements Comparable<Particle> {
         this.vx = vx;
     }
 
-    public Particle(String name, double m, double radio, double x, double y, double vx, double vy) {
+    public Particle(String name,int id, double m, double radio, double x, double y, double vx, double vy) {
+        this.id = id;
         this.name = name;
         this.x = x;
         this.y = y;
@@ -49,6 +51,14 @@ public class Particle implements Comparable<Particle> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public double getRadio() {

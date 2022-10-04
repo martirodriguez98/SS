@@ -5,6 +5,7 @@ public class State {
     private double vx;
     private double vy;
     private String name;
+    private int id;
 
     public State(Double time, double x, double vx) {
         this.time = time;
@@ -12,13 +13,21 @@ public class State {
         this.vx = vx;
     }
 
-    public State(String name, Double time, double x, double y, double vx, double vy) {
-        this.name = name;
+    public State(int id, Double time, double x, double y, double vx, double vy) {
+        this.id = id;
         this.time = time;
         this.x = x;
         this.y = y;
         this.vx = vx;
         this.vy = vy;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

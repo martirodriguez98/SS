@@ -58,7 +58,7 @@ public class GearPredictorCorrector {
         //initial states
         for (Particle p : particlesMap.values()) {
             initialStates.putIfAbsent(p, new LinkedList<>());
-            initialStates.get(p).add(new State(p.getName(),0.0, p.getX(), p.getY(), p.getVx(), p.getVy()));
+            initialStates.get(p).add(new State(p.getId(),0.0, p.getX(), p.getY(), p.getVx(), p.getVy()));
         }
 
         int iterations = 0;
@@ -188,7 +188,7 @@ public class GearPredictorCorrector {
             double vx = r.get(1).getX();
             double vy = r.get(1).getY();
             states.putIfAbsent(particle, new LinkedList<>());
-            states.get(particle).add(new State(particle.getName(),t, x, y, vx, vy));
+            states.get(particle).add(new State(particle.getId(),t, x, y, vx, vy));
         });
     }
 }

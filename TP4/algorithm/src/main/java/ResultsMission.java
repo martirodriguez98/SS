@@ -29,7 +29,7 @@ public class ResultsMission {
                 bf.write(String.valueOf(entry.getKey()));
                 bf.newLine();
                 for (State state : entry.getValue()) {
-                    bf.write(state.getX() + "," + state.getY() + "," + 0 + "," + state.getVx() + "," + state.getVy());
+                    bf.write(state.getId() + "," + state.getX() + "," + state.getY() + "," + state.getVx() + "," + state.getVy());
                     bf.newLine();
                 }
                 bf.flush();
