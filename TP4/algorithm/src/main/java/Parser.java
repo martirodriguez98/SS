@@ -21,7 +21,7 @@ public class Parser {
         Map<String, Particle> particles = new HashMap<>();
         if(planetLines != null){
             for(List<String> line : planetLines){
-                Particle particle = new Particle(line.get(0),Integer.parseInt(line.get(1)),Double.parseDouble(line.get(2)),Double.parseDouble(line.get(3)),
+                Particle particle = new Particle(line.get(0),Integer.parseInt(line.get(1)),Double.parseDouble(line.get(3)),Double.parseDouble(line.get(2)),
                         Double.parseDouble(line.get(4)),Double.parseDouble(line.get(5)),Double.parseDouble(line.get(6)),
                         Double.parseDouble(line.get(7)));
                 particles.put(particle.getName(), particle);

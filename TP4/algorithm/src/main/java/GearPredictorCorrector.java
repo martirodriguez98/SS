@@ -2,7 +2,7 @@ import java.math.BigInteger;
 import java.util.*;
 
 public class GearPredictorCorrector {
-    private static final double G = 6.693 * Math.pow(10, -11);
+    private static final double G = 6.693 * Math.pow(10, -11) / Math.pow(10, 9);
     private static final double[] alphas = {3.0 / 16, 251.0 / 360, 1.0, 11.0 / 18, 1.0 / 6, 1.0 / 60};
 
     public static Results run(final Particle particle, final double finalTime, final double dt, double k, double gamma) {

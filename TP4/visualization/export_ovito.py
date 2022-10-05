@@ -38,7 +38,7 @@ def export_to_ovito():
 def get_particle_data(static_file, dynamic_file,step):
     st_df = pd.read_csv(static_file, sep=",", skiprows=0, names=["name","radius","mass","x","y","vx","vy"], usecols=["radius","mass"])
     st_df.radius[0] = 1000
-    st_df.radius[1] = 700
+    st_df.radius[1] = 400
     st_df.radius[2] = 3000
     st_df.radius[3] = 800
 
