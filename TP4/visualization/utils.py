@@ -29,6 +29,7 @@ def get_spaceship_distance(data: DataFrame, initial_date:datetime):
         sy = 0
         vx = 0
         vy = 0
+        rv = 0
         for row in df[1].iterrows():
             if row[1]['name'] == 'SPACESHIP':
                 sx = row[1]['x']
@@ -36,7 +37,9 @@ def get_spaceship_distance(data: DataFrame, initial_date:datetime):
             if row[1]['name'] == 'VENUS':
                 vx = row[1]['x']
                 vy = row[1]['y']
-        distances.append(np.sqrt((sx - vx) ** 2 + (sy - vy) ** 2))
+                print(row[1])
+                rv = row[1]['radio']
+        distances.append(np.sqrt((sx - vx) ** 2 + (sy - vy) ** 2) - rv )
     print(distances)
     return [dates,distances]
 

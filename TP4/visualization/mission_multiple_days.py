@@ -14,7 +14,7 @@ def parse_mission_results():
         static_file = f'static-file-{day}.txt'
         dynamic_file = f'results-{day}.txt'
         export_file = f'ovito-results-{day}.dump'
-        export_to_ovito(static_file, dynamic_file, export_file)
+        # export_to_ovito(static_file, dynamic_file, export_file)
         data = parse_data(static_file,dynamic_file)
         date_tokens = day.split('-')
         date = datetime.date(int(date_tokens[2]),int(date_tokens[1]),int(date_tokens[0]))
