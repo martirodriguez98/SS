@@ -2,7 +2,7 @@ import java.util.Map;
 
 public class TestMission {
     public static void main(String[] args) {
-        Map<String, Particle> particles = Parser.parse("planets.txt");
+        Map<String, Particle> particles = Parser.parse("planets-23-09-2022.txt");
         double distanceToSpaceship = 1500;
 
         Particle earth = particles.get("EARTH");

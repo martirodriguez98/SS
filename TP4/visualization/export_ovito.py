@@ -8,11 +8,11 @@ from ovito.pipeline import Pipeline, StaticSource
 
 EventData = namedtuple('EventData', ['time','data'])
 
-def export_to_ovito():
-    static_file = "static_file.txt"
-    dynamic_file = "results.txt"
-    export_path = "ovito_results.dump"
+def export_to_ovito(static_file, dynamic_file, export_path):
+
     data_frame = get_particle_data(static_file, dynamic_file, step=int(12*60*60/300))
+    # data_frame = get_particle_data(static_file, dynamic_file, step=int(1))
+
 
     # Create a new Pipeline with a StaticSource as data source:
     pipeline = Pipeline(source=StaticSource(data=DataCollection()))
@@ -37,10 +37,10 @@ def export_to_ovito():
 
 def get_particle_data(static_file, dynamic_file,step):
     st_df = pd.read_csv(static_file, sep=",", skiprows=0, names=["name","radius","mass","x","y","vx","vy"], usecols=["radius","mass"])
-    st_df.radius[0] = 1000
-    st_df.radius[1] = 400
-    st_df.radius[2] = 3000
-    st_df.radius[3] = 800
+    st_df.radius[0] = st_df.radius[0] * 30
+    st_df.radius[1] = 100000
+    # st_df.radius[2] = 3000
+    st_df.radius[3] = st_df.radius[3] * 30
 
     dfs = []
     with open(dynamic_file, "r") as results:
@@ -62,7 +62,7 @@ def get_particle_data(static_file, dynamic_file,step):
 def get_particles(data_frame):
     particles = Particles()
     particles.create_property('Particle Identifier', data=np.concatenate((data_frame.id, np.arange(len(data_frame.x),len(data_frame.x)))))
-    particles.create_property("Position", data=np.array((data_frame.x, data_frame.y,np.zeros(len(data_frame.x)))).T)
+    particles.create_property("Position", data=np.array((data_frame.x/15, data_frame.y/15,np.zeros(len(data_frame.x)))).T)
     particles.create_property("Radius", data=data_frame.radius)
     particles.create_property("Force", data=np.array((data_frame.vx,data_frame.vy, np.zeros(len(data_frame.x)))).T)
 

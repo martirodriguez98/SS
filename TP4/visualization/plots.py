@@ -48,3 +48,18 @@ def plot_error(algorithm_name, all_errors, deltas):
     )
     fig.update_layout(xaxis_type="log", yaxis_type="log")
     fig.show()
+
+
+def plot_spaceship_distance(dates, distances):
+   fig = go.Figure(
+       data = go.Scatter(
+           x = dates,
+           y = distances
+       ),
+       layout= go.Layout(
+           title = dict(text="funcionara???"),
+           xaxis=dict(title='Date'),
+           yaxis=dict(title='Distance')
+       )
+   )
+   fig.show()
