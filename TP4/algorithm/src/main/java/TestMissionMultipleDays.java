@@ -2,7 +2,7 @@ import java.util.Map;
 
 public class TestMissionMultipleDays {
     public static void main(String[] args) {
-        String[] days = {"23-09-2022", "24-09-2022", "25-09-2022", "23-10-2022"};
+        String[] days = {"22-09-2022","23-09-2022", "24-09-2022", "25-09-2022","06-10-2022", "20-10-2022","23-10-2022", "01-01-2023", "25-09-2023"};
 
         for (String day : days){
             Map<String, Particle> particles = Parser.parse("planets-" + day + ".txt");

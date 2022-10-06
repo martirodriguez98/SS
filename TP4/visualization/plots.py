@@ -50,16 +50,16 @@ def plot_error(algorithm_name, all_errors, deltas):
     fig.show()
 
 
-def plot_spaceship_distance(dates, distances):
+def plot_data(x, y, title, x_title, y_title):
    fig = go.Figure(
        data = go.Scatter(
-           x = dates,
-           y = distances
+           x = x,
+           y = y
        ),
        layout= go.Layout(
-           title = dict(text="funcionara???"),
-           xaxis=dict(title='Date'),
-           yaxis=dict(title='Distance')
+           title = dict(text=f'{title}'),
+           xaxis=dict(title=f'{x_title}'),
+           yaxis=dict(title=f'{y_title}')
        )
    )
    fig.show()
