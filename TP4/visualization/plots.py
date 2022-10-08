@@ -1,5 +1,5 @@
-
 import plotly.graph_objects as go
+import numpy as np
 
 
 def plot(all_states, title, legends):
@@ -11,11 +11,11 @@ def plot(all_states, title, legends):
             x.append(row[1]['t'])
             y.append(row[1]['x'])
         data.append(go.Scatter(
-            x = x,
-            y = y,
-            name = f'{legends[i]}',
+            x=x,
+            y=y,
+            name=f'{legends[i]}',
             mode='lines',
-            line={'dash':'dash'}
+            line={'dash': 'dash'}
         )),
 
     fig = go.Figure(
@@ -29,19 +29,20 @@ def plot(all_states, title, legends):
 
     fig.show()
 
+
 def plot_error(algorithm_name, all_errors, deltas):
     data = []
-    for i,errors in enumerate(all_errors):
+    for i, errors in enumerate(all_errors):
         data.append(go.Scatter(
-            x = deltas,
-            y = errors,
-            name = f'{algorithm_name[i]}',
+            x=deltas,
+            y=errors,
+            name=f'{algorithm_name[i]}',
             mode='lines+markers',
         ))
     fig = go.Figure(
-        data = data,
-        layout = go.Layout(
-            title = dict(text=f'Error para {algorithm_name}'),
+        data=data,
+        layout=go.Layout(
+            title=dict(text=f'Error para {algorithm_name}'),
             xaxis=dict(title="Deltas"),
             yaxis=dict(title="Error cuadrático medio (m^2)")
         )
@@ -51,15 +52,15 @@ def plot_error(algorithm_name, all_errors, deltas):
 
 
 def plot_data(x, y, title, x_title, y_title):
-   fig = go.Figure(
-       data = go.Scatter(
-           x = x,
-           y = y
-       ),
-       layout= go.Layout(
-           title = dict(text=f'{title}'),
-           xaxis=dict(title=f'{x_title}'),
-           yaxis=dict(title=f'{y_title}')
-       )
-   )
-   fig.show()
+    fig = go.Figure(
+        data=go.Scatter(
+            x=x,
+            y=y,
+        ),
+        layout=go.Layout(
+            title=dict(text=f'{title}'),
+            xaxis=dict(title=f'{x_title}'),
+            yaxis=dict(title=f'{y_title}')
+        )
+    )
+    fig.show()

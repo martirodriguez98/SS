@@ -1,11 +1,13 @@
 import datetime
 
 from export_ovito import export_to_ovito
+import numpy as np
 from plots import plot_data
 from utils import parse_data, get_spaceship_distance, get_spaceship_velocities
 
+
 def run_mission():
-    day = '23-09-2022'
+    day = '25-09-2022'
     static_file = f'static-file-{day}.txt'
     dynamic_file = f'results-{day}.txt'
     export_file = f'ovito-results-{day}.dump'
@@ -19,19 +21,21 @@ def run_mission():
     # export_to_ovito(static_file, dynamic_file, export_file)
     # print(f'Ovito exportation for day {day} complete')
     #
-    # eja(data,initial_date, day) #day is string and initial date is datetime
 
-    ejb(data,initial_date,day)
+    [dates, distances] = get_spaceship_distance(data, initial_date)
+    # plot_data(dates, distances, f'Spaceship distance to Venus launch day {day}', "Date", "Distance")
+    #
+    min_distance_index = np.argmin(distances)
+    #
+    # [dates,velocities_data] = get_spaceship_velocities(data, initial_date, min_distance_index)
+    # plot_data(dates, velocities_data, f'Spaceship speed evolution for launch day {day}', "Date", "Velocity")
+
+    min_distance_data = data[min_distance_index]
+    relative_distance = np.sqrt((min_distance_data[1].iloc[2]['vx'] - min_distance_data[1].iloc[3]['vx']) ** 2 + (min_distance_data[1].iloc[2]['vy'] - min_distance_data[1].iloc[3]['vy']) ** 2)
+    arrival_day = initial_date + datetime.timedelta(seconds=min_distance_data[0])
+    print(f'Spaceship\'s relative distance to venus on arrival day {arrival_day} is {relative_distance}')
 
     print(f'day: {day} complete!')
-
-def eja(data, initial_date, day):
-    [dates, distances] = get_spaceship_distance(data, initial_date)
-    plot_data(dates, distances, f'Spaceship distance to Venus launch day {day}', "Date", "Distance")
-
-def ejb(data, initial_date, day):
-    [dates,velocities_data] = get_spaceship_velocities(data, initial_date)
-    plot_data(dates, velocities_data, f'Spaceship speed evolution for launch day {day}', "Date", "Velocity")
 
 
 if __name__ == '__main__':
