@@ -42,4 +42,13 @@ def get_spaceship_distance(data: DataFrame, initial_date:datetime):
     return [dates,distances]
 
 
-
+def get_spaceship_velocities(data: DataFrame, initial_date: datetime):
+    dates = []
+    velocities = []
+    for df in data:
+        date = initial_date + datetime.timedelta(seconds=df[0])
+        dates.append(date)
+        for row in df[1].iterrows():
+            if row[1]['name'] == 'SPACESHIP':
+                velocities.append(np.sqrt(row[1]['vx'] ** 2 + row[1]['vy'] ** 2))
+    return [dates, velocities]
