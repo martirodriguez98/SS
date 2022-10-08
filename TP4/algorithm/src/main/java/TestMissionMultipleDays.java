@@ -3,7 +3,8 @@ import java.util.Map;
 public class TestMissionMultipleDays {
     public static void main(String[] args) {
         String[] days = {"22-09-2022","23-09-2022", "24-09-2022", "25-09-2022","06-10-2022", "20-10-2022","23-10-2022", "01-01-2023", "25-09-2023"};
-
+        double minDistance = Double.MAX_VALUE;
+        String minDay = "";
         for (String day : days){
             Map<String, Particle> particles = Parser.parse("planets-" + day + ".txt");
             double distanceToSpaceship = 1500;
@@ -31,6 +32,13 @@ public class TestMissionMultipleDays {
             double dt = 300;
             ResultsMission resultsMission = GearPredictorCorrector.runMissionGear(particles, finalTime, dt);
             resultsMission.exportResults("results-" + day + ".txt");
+            System.out.println(day + ": " + resultsMission.getMinDistance());
+            if(resultsMission.getMinDistance() < minDistance){
+                minDistance = resultsMission.getMinDistance();
+                minDay = day;
+            }
         }
+        System.out.println("*******************************");
+        System.out.println("Best day was " + minDay + " with distance: " + minDistance);
     }
 }
