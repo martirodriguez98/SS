@@ -2,7 +2,9 @@ import datetime
 
 from export_ovito import export_to_ovito
 import numpy as np
-from plots import plot_data
+import pandas as pd
+
+from plots import plot_data, plot_different_v
 from utils import parse_data, get_spaceship_distance, get_spaceship_velocities
 
 
@@ -23,12 +25,12 @@ def run_mission():
 
 
     [dates, distances] = get_spaceship_distance(data, initial_date)
-    # plot_data(dates, distances, f'Spaceship distance to Venus launch day {day}', "Date", "Distance")
-    #
+    plot_data(dates, distances, f'Spaceship distance to Venus launch day {day}', "Date", "Distance")
+
     min_distance_index = np.argmin(distances)
-    #
-    # [dates,velocities_data] = get_spaceship_velocities(data, initial_date, min_distance_index)
-    # plot_data(dates, velocities_data, f'Spaceship speed evolution for launch day {day}', "Date", "Velocity")
+
+    [dates,velocities_data] = get_spaceship_velocities(data, initial_date, min_distance_index)
+    plot_data(dates, velocities_data, f'Spaceship speed evolution for launch day {day}', "Date", "Velocity")
 
     min_distance_data = data[min_distance_index]
     relative_distance = np.sqrt((min_distance_data[1].iloc[2]['vx'] - min_distance_data[1].iloc[3]['vx']) ** 2 + (min_distance_data[1].iloc[2]['vy'] - min_distance_data[1].iloc[3]['vy']) ** 2)
@@ -38,7 +40,18 @@ def run_mission():
     print(f'day: {day} complete!')
 
 
-if __name__ == '__main__':
-    run_mission()
+def different_velocities():
+    file = "different_v.txt"
+    info = pd.read_csv(file,skiprows=0,sep=",",names=["velocity", "distance", "time"])
+    distances = info.loc[:,"distance"].values
+    text_distances = []
+    for i,d in enumerate(distances):
+        text_distances.append(f'{round(d,4)} km')
+    plot_different_v(info.loc[:,"velocity"].values,text_distances,info.loc[:,"time"].values)
 
+
+
+if __name__ == '__main__':
+    # run_mission()
+    different_velocities()
 

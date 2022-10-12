@@ -9,6 +9,7 @@ public class ResultsMission {
     private static int VENUS = 3;
     private final Map<Particle, List<State>> states;
     private double minDistance;
+    private double minTime;
     public ResultsMission(Map<Particle, List<State>> states) {
         this.states = states;
     }
@@ -29,7 +30,7 @@ public class ResultsMission {
                 rv = entry.getKey().getRadio();
             }
         }
-        double minDistance = Double.MAX_VALUE;
+        this.minDistance = Double.MAX_VALUE;
 
         File file = new File(path);
         BufferedWriter bf = null;
@@ -52,9 +53,9 @@ public class ResultsMission {
                 }
                 double distance = Math.sqrt(Math.pow(sx-vx,2) + Math.pow(sy - vy,2)) - rv;
                 if( distance < minDistance){
-                    minDistance = distance;
+                    this.minTime = entry.getKey()/86400;
+                    this.minDistance = distance;
                 }
-                this.minDistance = minDistance;
                 bf.flush();
             }
         } catch (IOException e) {
@@ -67,6 +68,14 @@ public class ResultsMission {
                 e.printStackTrace();
             }
         }
+    }
+
+    public double getMinTime() {
+        return minTime;
+    }
+
+    public void setMinTime(double minTime) {
+        this.minTime = minTime;
     }
 }
 

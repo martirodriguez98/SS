@@ -60,7 +60,26 @@ def plot_data(x, y, title, x_title, y_title):
         layout=go.Layout(
             title=dict(text=f'{title}'),
             xaxis=dict(title=f'{x_title}'),
-            yaxis=dict(title=f'{y_title}')
+            yaxis=dict(title=f'{y_title}'),
+        )
+    )
+    fig.show()
+
+def plot_different_v(velocities, distances, times):
+    data = go.Scatter(
+        x = velocities,
+        y = times,
+        mode='markers+text',
+        textposition='top center',
+        text = distances
+    )
+
+    fig = go.Figure(
+        data=data,
+        layout=go.Layout(
+            title=dict(text=f'Mission time for different velocities'),
+            xaxis=dict(title="Velocity (km/s)"),
+            yaxis=dict(title="Time (days)")
         )
     )
     fig.show()
