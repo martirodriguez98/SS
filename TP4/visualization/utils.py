@@ -26,7 +26,8 @@ def get_spaceship_distance(data: DataFrame, initial_date: datetime):
     dates = []
     distances = []
     for df in data:
-        date = initial_date + datetime.timedelta(seconds=df[0])
+        # date = initial_date + datetime.timedelta(seconds=df[0])
+        date = df[0] / 86400
         dates.append(date)
         sx = 0
         sy = 0
@@ -51,7 +52,8 @@ def get_spaceship_velocities(data: DataFrame, initial_date: datetime, min_distan
 
     for index, df in enumerate(data):
         if index < min_distance_index:
-            date = initial_date + datetime.timedelta(seconds=df[0])
+            # date = initial_date + datetime.timedelta(seconds=df[0])
+            date = df[0] / 86400
             dates.append(date)
             for row in df[1].iterrows():
                 if row[1]['name'] == 'SPACESHIP':

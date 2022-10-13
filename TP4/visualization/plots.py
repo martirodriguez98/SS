@@ -1,6 +1,4 @@
 import plotly.graph_objects as go
-import numpy as np
-
 
 def plot(all_states, title, legends):
     data = []
@@ -22,8 +20,9 @@ def plot(all_states, title, legends):
         data=data,
         layout=go.Layout(
             title=dict(text=f'{title}'),
-            xaxis=dict(title="Time"),
-            yaxis=dict(title="Position")
+            xaxis=dict(title="Tiempo (s)"),
+            yaxis=dict(title="Posición (m)"),
+            font=dict(size=22)
         ),
     )
 
@@ -43,11 +42,11 @@ def plot_error(algorithm_name, all_errors, deltas):
         data=data,
         layout=go.Layout(
             title=dict(text=f'Error para {algorithm_name}'),
-            xaxis=dict(title="Deltas"),
-            yaxis=dict(title="Error cuadrático medio (m^2)")
+            xaxis=dict(title="Deltas",exponentformat="power",type='log'),
+            yaxis=dict(title="Error cuadrático medio (m^2)",exponentformat="power",type='log'),
+            font=dict(size=22)
         )
     )
-    fig.update_layout(xaxis_type="log", yaxis_type="log")
     fig.show()
 
 
@@ -61,6 +60,7 @@ def plot_data(x, y, title, x_title, y_title):
             title=dict(text=f'{title}'),
             xaxis=dict(title=f'{x_title}'),
             yaxis=dict(title=f'{y_title}'),
+            font=dict(size=22)
         )
     )
     fig.show()
@@ -77,9 +77,10 @@ def plot_different_v(velocities, distances, times):
     fig = go.Figure(
         data=data,
         layout=go.Layout(
-            title=dict(text=f'Mission time for different velocities'),
-            xaxis=dict(title="Velocity (km/s)"),
-            yaxis=dict(title="Time (days)")
+            title=dict(text=f'Tiempo de la misión hasta llegar'),
+            xaxis=dict(title="Velocidad (km/s)"),
+            yaxis=dict(title="Tiempo (días)"),
+            font=dict(size=22)
         )
     )
     fig.show()

@@ -22,6 +22,20 @@ public class TestMission {
         double spaceshipX = (distanceToSpaceship + earth.getRadio()) * -rx + earth.getX();
         double spaceshipY = (distanceToSpaceship + earth.getRadio()) * -ry + earth.getY();
         List<String> info = new LinkedList<>();
+
+        double velocity = -7.12 -8 + earth.getVx() * tx + earth.getVy() * ty;
+        double spaceshipVx = tx * velocity;
+        double spaceshipVy = ty * velocity;
+        //radio 100 to visualize in ovito
+        particles.put("SPACESHIP", new Particle("SPACESHIP",1, 2*Math.pow(10,5),100, spaceshipX, spaceshipY, spaceshipVx, spaceshipVy));
+        Parser.addSpaceshipData("static-file-" + day + ".txt", particles.values().stream().toList());
+        double finalTime = 365 * 24 * 60 * 60;
+        double dt = 300.8851;
+        ResultsMission resultsMission = GearPredictorCorrector.runMissionGear(particles, finalTime, dt);
+        resultsMission.exportResults("results-" + day + ".txt",3);
+
+        /*
+
         for (double i =0,j = 0; j <= 5 ; i+=0.0001, j++){
             double velocity = -7.12 -(8 - i) + earth.getVx() * tx + earth.getVy() * ty;
             double spaceshipVx = tx * velocity;
@@ -37,6 +51,8 @@ public class TestMission {
             Utils.exportList(info, "different_v.txt");
 
         }
+
+         */
 
 
     }

@@ -61,7 +61,7 @@ public class TestMissionMultipleDays {
             //double dt = 300.885;
             double dt = 300.8851;
             ResultsMission resultsMission = GearPredictorCorrector.runMissionGear(particles, finalTime, dt);
-            resultsMission.exportResults("results-" + day + ".txt");
+            resultsMission.exportResults("results-" + day + ".txt", venusId);
             System.out.println(day + ": " + resultsMission.getMinDistance());
             dates.add(day + "," + resultsMission.getMinDistance());
             if(resultsMission.getMinDistance() < minDistance){
