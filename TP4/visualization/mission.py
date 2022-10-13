@@ -9,7 +9,7 @@ from utils import parse_data, get_spaceship_distance, get_spaceship_velocities
 
 
 def run_mission():
-    day = '17-08-2023'
+    day = '22-06-2023'
     # static_file = f'static-file-{day}.txt'
     # dynamic_file = f'results-{day}.txt'
     # export_file = f'ovito-results-{day}.dump'
@@ -23,12 +23,12 @@ def run_mission():
     data = parse_data(static_file, dynamic_file)
     print(f'parse for day {day} complete')
 
-    export_to_ovito(static_file, dynamic_file, export_file)
-    print(f'Ovito exportation for day {day} complete')
+    # export_to_ovito(static_file, dynamic_file, export_file)
+    # print(f'Ovito exportation for day {day} complete')
 
 
     [dates, distances] = get_spaceship_distance(data, initial_date)
-    plot_data(dates, distances, f'Distancia de la nave a venus para el despegue {day}', "Días", "Distancia (km)")
+    plot_data(dates, distances, f'Distancia de la nave a la tierra para el despegue {day}', "Días", "Distancia (km)")
 
     min_distance_index = np.argmin(distances) + 1
 

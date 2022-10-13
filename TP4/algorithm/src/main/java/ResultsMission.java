@@ -29,7 +29,7 @@ public class ResultsMission {
                 statesByTime.putIfAbsent(state.getTime(), new LinkedList<>());
                 statesByTime.get(state.getTime()).add(state);
             }
-            if(entry.getKey().getName().equals("VENUS")){
+            if(entry.getKey().getId() == planet){
                 rv = entry.getKey().getRadio();
             }
         }
@@ -54,9 +54,9 @@ public class ResultsMission {
                         vy = state.getY();
                     }
                 }
-                double distance = Math.sqrt(Math.pow(sx-vx,2) + Math.pow(sy - vy,2)) - rv;
-                if( distance < minDistance){
-                    this.minTime = entry.getKey()/86400;
+                double distance = Math.sqrt(Math.pow(sx - vx, 2) + Math.pow(sy - vy, 2)) - rv;
+                if (distance < minDistance) {
+                    this.minTime = entry.getKey() / 86400;
                     this.minDistance = distance;
                 }
                 bf.flush();

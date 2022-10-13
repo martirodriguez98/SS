@@ -38,7 +38,7 @@ def get_spaceship_distance(data: DataFrame, initial_date: datetime):
             if row[1]['name'] == 'SPACESHIP':
                 sx = row[1]['x']
                 sy = row[1]['y']
-            if row[1]['name'] == 'VENUS':
+            if row[1]['name'] == 'EARTH':
                 vx = row[1]['x']
                 vy = row[1]['y']
                 rv = row[1]['radio']

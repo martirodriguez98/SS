@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 
 public class MissionBack {
     public static void main(String[] args) {
-        runMultipleDays();
-//        runOneDay();
+//        runMultipleDays();
+        runOneDay();
     }
 
     public static void runMultipleDays(){
@@ -22,7 +22,7 @@ public class MissionBack {
         double venusRadius = constantData.get("VENUS").getRadio();
         int earthId = constantData.get("EARTH").getId();
         int venusId = constantData.get("VENUS").getId();
-        double distanceToSpaceship = -1500;
+        double distanceToSpaceship = 1500;
         List<List<String>> earthLines = null;
         List<List<String>> venusLines = null;
         try {
@@ -36,7 +36,8 @@ public class MissionBack {
 
         List<String> dates = new LinkedList<>();
 
-        for (int i = 100; i < daysTested; i++) {
+        for (int i = 0; i < daysTested; i++) {
+            double speed = 18.786;
             List<String> dayEarth = earthLines.get(i);
             List<String> dayVenus = venusLines.get(i);
             String day = dayEarth.get(0);
@@ -57,19 +58,19 @@ public class MissionBack {
             double spaceshipX = (distanceToSpaceship + venus.getRadio()) * rx + venus.getX();
             double spaceshipY = (distanceToSpaceship + venus.getRadio()) * ry + venus.getY();
 
-            double velocity = 8.8 + venus.getVx() * tx + venus.getVy() * ty;
+            double velocity = speed + venus.getVx() * tx + venus.getVy() * ty;
             double spaceshipVx = tx * velocity;
             double spaceshipVy = ty * velocity;
 
             //radio 100 to visualize in ovito
             particles.put("SPACESHIP", new Particle("SPACESHIP", 1, 2 * Math.pow(10, 5), 100, spaceshipX, spaceshipY, spaceshipVx, spaceshipVy));
 //            Parser.addSpaceshipData("static-file-" + day + ".txt", particles.values().stream().toList());
-            double finalTime = 700 * 24 * 60 * 60;
+            double finalTime = 365 * 24 * 60 * 60;
             //double dt = 300.885;
-            double dt = 300;
+            double dt = 300.5;
             ResultsMission resultsMission = GearPredictorCorrector.runMissionGear(particles, finalTime, dt);
             resultsMission.exportResults2(earthId);
-            System.out.println(day + ": " + resultsMission.getMinDistance());
+            System.out.println(day + ": " + resultsMission.getMinDistance() + " t: " + resultsMission.getMinTime());
             dates.add(day + "," + resultsMission.getMinDistance());
             if (resultsMission.getMinDistance() < minDistance) {
                 minDistance = resultsMission.getMinDistance();
@@ -83,10 +84,10 @@ public class MissionBack {
     }
 
     public static void runOneDay(){
-        String day = "17-08-2023";
+        String day = "22-06-2023";
         Map<String, Particle> particles = Parser.parse("planets-" + day + ".txt");
         double distanceToSpaceship = 1500;
-
+        double speed =18.786;
         Particle venus = particles.get("VENUS");
         Particle sun = particles.get("SUN");
         double distanceVenusSun = Math.sqrt(Math.pow((venus.getX() - sun.getX()),2) + Math.pow((venus.getY() - sun.getY()),2));
@@ -100,16 +101,17 @@ public class MissionBack {
         double spaceshipX = (distanceToSpaceship + venus.getRadio()) * rx + venus.getX();
         double spaceshipY = (distanceToSpaceship + venus.getRadio()) * ry + venus.getY();
 
-        double velocity = 8.8 + venus.getVx() * tx + venus.getVy() * ty;
+        double velocity = speed + venus.getVx() * tx + venus.getVy() * ty;
         double spaceshipVx = tx * velocity;
         double spaceshipVy = ty * velocity;
         //radio 100 to visualize in ovito
         particles.put("SPACESHIP", new Particle("SPACESHIP",1, 2*Math.pow(10,5),100, spaceshipX, spaceshipY, spaceshipVx, spaceshipVy));
         Parser.addSpaceshipData("missionBackStatic-" + day + ".txt", particles.values().stream().toList());
-        double finalTime = 700 * 24 * 60 * 60;
-        double dt = 300;
+        double finalTime = 365 * 24 * 60 * 60;
+        double dt = 300.5;
         ResultsMission resultsMission = GearPredictorCorrector.runMissionGear(particles, finalTime, dt);
         resultsMission.exportResults("missionBack-" + day + ".txt",0);
         System.out.println(resultsMission.getMinDistance());
+        System.out.println(resultsMission.getMinTime());
     }
 }
