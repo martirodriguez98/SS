@@ -1,7 +1,7 @@
 package CellIndexMethod;
 
+import utils.Pair;
 import utils.Particle;
-import utils.Position;
 import utils.R;
 
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class Grid {
 
     public void fillGrid(Map<Particle, R> particles, double incX, double incY) {
         for (Map.Entry<Particle, R> entry : particles.entrySet()) {
-            Position pos = entry.getKey().getPosition();
+            Pair pos = entry.getValue().get(0);
 
             if (pos.getY() >= 0 && pos.getY() < l) {
                 final int row = (int) Math.floor(pos.getY() / incY);

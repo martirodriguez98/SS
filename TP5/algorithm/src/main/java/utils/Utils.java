@@ -4,77 +4,54 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Utils {
 
-    public static List<Particle> generateParticles(int n, double mass, int L, int W, double minX, double maxX, String pathSt, String pathDy) {
-
-        List<String> staticFile = new LinkedList<>();
-        List<String> dynamicFile = new LinkedList<>();
-        Random randGen = new Random();
-
-        staticFile.add(String.valueOf(n));
-        staticFile.add(String.valueOf(L));
-        dynamicFile.add(String.valueOf(0));
-
-        List<Particle> createdParticles = new ArrayList<>();
-
+    public static Map<Particle, R> generateParticles(int n, double mass, int L, int W, double minX, double maxX, double minY, double maxY) {
+        Map<Particle, R> createdParticles = new HashMap<>();
         int createdParticlesCount = 0;
-        boolean success = false;
-        while (createdParticlesCount < n) {
-            while (!success) {
-                success = true;
-                double radio = Particle.randDouble(randGen, 0.85, 1.15);
-                Particle p = Particle.randomParticle(randGen, createdParticlesCount, radio, L, W, mass);
-                for (Particle particle : createdParticles) {
-                    double positionX = Math.pow(p.getPosition().getX() - particle.getPosition().getX(), 2);
-                    double positionY = Math.pow(p.getPosition().getY() - particle.getPosition().getY(), 2);
-                    double radios = Math.pow(p.getRadio() + particle.getRadio(), 2);
-                    if (positionX + positionY <= radios) {
-                        success = false;
-                        break;
-                    }
-                }
-                if (success) {
-                    createdParticles.add(p);
-                    createdParticlesCount++;
-                    staticFile.add("" + radio + "\s" + mass);
-                    dynamicFile.add("" + p.getPosition().getX() + "\s" + p.getPosition().getY() + "\s" + 0 + "\s" + p.getVx() + "\s" + p.getVy());
-                }
-            }
-            success = false;
+        for (int i = 0; i < n; i++) {
+            double radio = randDouble(new Random(), 0.85, 1.15);
+            Particle p = new Particle(createdParticlesCount, radio, mass);
+            createdParticlesCount++;
+            R state = generateState(p, createdParticles, minX, maxX, minY, maxY);
+            createdParticles.put(p, state);
         }
-        exportToFile(staticFile, pathSt);
-        exportToFile(dynamicFile, pathDy);
+
         return createdParticles;
     }
 
-    public static void exportToFile(List<String> list, String path) {
-        File file = new File(path);
-        BufferedWriter bf = null;
+    public static R generateState(Particle p, Map<Particle, R> particles, double minX, double maxX, double minY, double maxY) {
+        Random randGen = new Random();
+        boolean success = false;
+        double x=0, y=0;
+        while (!success) {
+            success = true;
+            x = minX + randGen.nextDouble() * (maxX - minX);
+            y = minY + randGen.nextDouble() * (maxY - minY);
 
-        try {
-            // create new BufferedWriter for the output file
-            bf = new BufferedWriter(new FileWriter(file));
+            for (Map.Entry<Particle, R> entry : particles.entrySet()) {
+                Pair otherPos = entry.getValue().get(0);
+                double positionX = Math.pow(otherPos.getX() - x, 2);
+                double positionY = Math.pow(otherPos.getY() - y, 2);
+                double radios = Math.pow(p.getRadio() + entry.getKey().getRadio(), 2);
 
-            for (String lt : list) {
-                bf.write(lt.toString() + "\n");
-            }
-            bf.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                // always close the writer
-                assert bf != null;
-                bf.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+                if (positionX + positionY <= radios) {
+                    success = false;
+                    break;
+                }
             }
         }
+
+
+        R r = new R();
+        r.set(0, x,y);
+        r.set(1, 0,0); //initial velocity is always 0
+        return r;
+    }
+
+    public static double randDouble(final Random randomGen, final double min, final double max) {
+        return min + randomGen.nextDouble() * (max - min);
     }
 }

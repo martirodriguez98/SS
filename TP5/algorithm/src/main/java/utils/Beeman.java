@@ -3,63 +3,52 @@ package utils;
 
 import CellIndexMethod.Grid;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static utils.BeemanUtils.euler;
-import static utils.BeemanUtils.getStartingAcc;
+import static utils.BeemanUtils.*;
 
 public class Beeman {
+    private static double RESPAWN_MIN_H = 40;
+    private static double RESPAWN_MAX_H = 70;
 
-    public static Results run(final Particle particle, final double finalTime, final double dt, double k, double gamma) {
-        List<State> states = new LinkedList<>();
-        double v, x;
-        double force = -k * particle.getPosition().getX() - gamma * particle.getVx();
-        double prevPosX = euler(particle, force, -dt);
-        double prevVx = eulerVel(particle, force, -dt);
-        double prevAcc = (-k * prevPosX - gamma * prevVx) / particle.getMass();
-        double t = 0;
-        double newVx;
-        double newAcc;
-        while (t < finalTime) {
-            states.add(new State(t, particle.getPosition().getX(), particle.getVx()));
-            force = -k * particle.getPosition().getX() - gamma * particle.getVx();
-            x = particle.getPosition().getX() + particle.getVx() * dt + (2.0 / 3) * (force / particle.getMass()) * dt * dt - (1.0 / 6) * prevAcc * dt * dt;
-
-            //predict velocity
-            force = -k * x - gamma * particle.getVx();
-            v = particle.getVx() + (3.0 / 2) * (force / particle.getMass()) * dt - (1.0 / 2) * prevAcc * dt;
-            newAcc = (-k * x - gamma * v) / particle.getMass();
-
-            //correct velocity
-            force = -k * particle.getPosition().getX() - gamma * particle.getVx();
-            newVx = particle.getVx() + (1.0 / 3) * newAcc * dt + (5.0 / 6) * (force / particle.getMass()) * dt - (1.0 / 6) * prevAcc * dt;
-            prevAcc = (-k * particle.getPosition().getX() - gamma * particle.getVx()) / particle.getMass();
-
-            particle.setVx(newVx);
-            particle.getPosition().setX(x);
-            t += dt;
-        }
-        return new Results(states);
-    }
 
     public static Results run(final Map<Particle, R> initialRs, final double finalTime,
-                              final double dt, final int w, final double A, final double gravity,
+                              final double dt, final int l, final int w, final double A, final double gravity,
                               final double kn, final double kt) {
 
         getStartingAcc(initialRs, gravity);
         //todo save states
 
         Map<Particle, R> prevRs = euler(initialRs, -dt, gravity);
-        //todo hacer
 
         Map<Particle, R> currRs = initialRs;
+        Set<Particle> particlesLeft = new HashSet<>();
 
-//        int bestM = Grid.getBestGrid(l - 30, )
-//        Grid grid = new Grid();
-        //todo crear la grid
+        double maxRadius = initialRs.keySet().stream().map(Particle::getRadio).max(Double::compare).orElseThrow();
+        int bestM = Grid.getBestGrid(l - (int)(RESPAWN_MAX_H-RESPAWN_MIN_H), maxRadius); //30 is the restriction given
+        int bestN = Grid.getBestGrid(w, maxRadius);
+        Grid grid = new Grid(initialRs, bestM, bestN, l - (int)(RESPAWN_MAX_H-RESPAWN_MIN_H), w);
 
+        for(double t = dt; t < finalTime; t+=dt){
+
+            Map<Particle, R> nextRs = getNextRs(); //todo ver que poner
+
+            Set<Particle> particlesLeavingNow = new HashSet<>();
+            final Map<Particle, R> respawnedParticles = respawnParticles(currRs, particlesLeavingNow, particlesLeft, w, RESPAWN_MIN_H,RESPAWN_MAX_H,l/10.0); //todo hacer que se muevan
+            getStartingAcc(respawnedParticles, gravity);
+
+            assert nextRs != null;
+            nextRs.putAll(respawnedParticles);
+
+            //todo compute caudal
+
+            prevRs = currRs;
+            prevRs.putAll(euler(respawnedParticles, -dt, gravity));
+            currRs = nextRs;
+        }
+
+        //todo return results
+        return null;
     }
 
     private static double calculateForce(List<Particle> particleList, Particle p) {
