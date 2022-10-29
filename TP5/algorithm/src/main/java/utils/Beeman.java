@@ -1,9 +1,14 @@
 package utils;
 
 
+import CellIndexMethod.Grid;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static utils.BeemanUtils.euler;
+import static utils.BeemanUtils.getStartingAcc;
 
 public class Beeman {
 
@@ -42,20 +47,18 @@ public class Beeman {
     public static Results run(final Map<Particle, R> initialRs, final double finalTime,
                               final double dt, final int w, final double A, final double gravity,
                               final double kn, final double kt) {
-        Map<Particle, R> prevRs = calculatePrevRs(initialRs);
-        Map<Particle, R> currentRs = initialRs;
-        for (double t = dt; t < finalTime; t += dt) {
-            exportStates(currentRs);
 
-            calculateCurrentForces(currentRs, prevRs);
+        getStartingAcc(initialRs, gravity);
+        //todo save states
 
-            Map<Particle, R> predictedVelocities = predictVelocities(currentForce, prevRs);
+        Map<Particle, R> prevRs = euler(initialRs, -dt, gravity);
+        //todo hacer
 
-            predictedVelocities = correctVelocities(currentRs, predictedVelocities, prevRs );
+        Map<Particle, R> currRs = initialRs;
 
-            updateParticles(currentRs, correctedVelocities);
-
-        }
+//        int bestM = Grid.getBestGrid(l - 30, )
+//        Grid grid = new Grid();
+        //todo crear la grid
 
     }
 
@@ -63,13 +66,7 @@ public class Beeman {
         return 0.0;
     }
 
-    private static double euler(Particle particle, double f, double dt) {
-        return particle.getPosition().getX() + particle.getVx() * dt + dt * dt * (f / (2 * particle.getMass()));
-    }
 
-    private static double eulerVel(Particle particle, double f, double dt) {
-        return particle.getVx() + dt * f / particle.getMass();
-    }
 
 
 }
