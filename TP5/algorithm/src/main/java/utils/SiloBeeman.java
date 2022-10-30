@@ -7,7 +7,7 @@ import java.util.*;
 
 import static utils.BeemanUtils.*;
 
-public class Beeman {
+public class SiloBeeman {
     private static double RESPAWN_MIN_H = 40;
     private static double RESPAWN_MAX_H = 70;
 

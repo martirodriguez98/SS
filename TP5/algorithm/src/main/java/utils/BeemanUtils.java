@@ -14,6 +14,80 @@ public class BeemanUtils {
         states.forEach((particle, r) -> r.set(2, 0.0, -gravity));
     }
 
+    static Pair getAcc(Particle p, Set<Particle> neighbours, Map<Particle, R> currRs, double d, int w, double gravity, double kn, double kt, double wallR0, double wallR1){
+        //will use forces to calculate acceleration
+
+        Pair particleR0 = currRs.get(p).get(0);
+        Pair particleR1 = currRs.get(p).get(1);
+
+        double fx=0, fy=0;
+
+        // if it collides with other particles
+        for(Particle particle : neighbours){
+            R pR = currRs.get(particle);
+            if(particle != p){
+                //calculate particle collision forces
+                Pair collisionF = calculateCollisionForce(p, particle, particleR0, particleR1, pR.get(0), pR.get(1), kn, kt);
+                fx += collisionF.getX();
+                fy += collisionF.getY();
+            }
+        }
+        // if it collides with a wall
+        //bottom wall
+        if(particleR0.getY() <= p.getRadio()){
+            //is the particle inside the opening?
+            if(checkIfOpening(particleR0, w ,d)){
+                //right side of opening
+                R rightSideR = new R();
+                rightSideR.set(0, w/2.0 + d/2.0, 0);
+                rightSideR.set(1, 0, wallR1);
+                Pair rightSideForce = calculateCollisionForce(p, null, particleR0, particleR1, rightSideR.get(0), rightSideR.get(1), kn ,kt);
+
+                //left side of opening
+                R leftSideR = new R();
+                leftSideR.set(0, w/2.0 - d/2.0, 0);
+                leftSideR.set(1, 0, wallR1);
+                Pair leftSideForce = calculateCollisionForce(p, null, particleR0, particleR1, leftSideR.get(0), leftSideR.get(1), kn ,kt);
+
+                fx += rightSideForce.getX() + leftSideForce.getX();
+                fy += rightSideForce.getY() + leftSideForce.getY();
+            }
+            else{
+                R bottomWallR = new R();
+                bottomWallR.set(0, particleR0.getX(), wallR0);
+                bottomWallR.set(1, 0, wallR1);
+                Pair bottomWallForce = calculateCollisionForce(p, null, particleR0, particleR1, bottomWallR.get(0), bottomWallR.get(1), kn, kt);
+
+                fx += bottomWallForce.getX();
+                fy += bottomWallForce.getY();
+            }
+        }
+
+        //left wall
+        if(particleR0.getX() <= p.getRadio()){
+            R lWall = new R();
+            lWall.set(0, 0, particleR0.getY());
+            lWall.set(1, 0, wallR1);
+            Pair force = calculateCollisionForce(p, null, particleR0, particleR1, lWall.get(0), lWall.get(1), kn, kt);
+            fx += force.getX();
+            fy += force.getY();
+        }
+
+        //right wall
+        if(particleR0.getX() + p.getRadio() >= w){
+            R rWall = new R();
+            rWall.set(0, w, particleR0.getY());
+            rWall.set(1, 0, wallR1);
+            Pair force = calculateCollisionForce(p, null, particleR0, particleR1, rWall.get(0), rWall.get(1), kn, kt);
+            fx += force.getX();
+            fy += force.getY();
+        }
+
+        //gravity
+        fy -= p.getMass() * gravity;
+        return new Pair(fx/p.getMass(), fy/p.getMass());
+    }
+
     static Map<Particle, R> euler(Map<Particle,R> initialRs, double dt, double gravity){
 
         final Map<Particle, R> states = new HashMap<>();
@@ -113,5 +187,40 @@ public class BeemanUtils {
             }
         });
         return respawnedParticles;
+    }
+
+    static Pair calculateCollisionForce(Particle p1, Particle p2, Pair p1R0, Pair p1R1, Pair p2R0, Pair p2R1, double kn, double kt){
+        double fx=0, fy=0;
+
+        double dR0X = p2R0.getX() - p1R0.getX();
+        double dR0Y = p2R0.getY() - p1R0.getY();
+        double dist = Math.hypot(dR0X, dR0Y);
+        double radiusDist = p1.getRadio() + (p2 == null ? 0.0 : p2.getRadio());
+        double touching = radiusDist - dist;
+
+        //use particle collision force equations
+        if(touching >= 0){
+            //normal
+            double enX = dR0X / dist;
+            double enY = dR0Y / dist;
+            //tangential
+            double etX = -enY;
+            double etY = enX;
+
+            double fn = -kn * touching;
+
+            double dR1X = p1R1.getX() - p2R1.getX();
+            double dR1Y = p1R1.getY() - p2R1.getY();
+
+            double ft = -kt * touching * (dR1X * etX + dR1Y * etY);
+
+            fx += fn * enX + ft * etX;
+            fy += fn * enY + ft * etY;
+        }
+        return new Pair(fx, fy);
+    }
+
+    private static boolean checkIfOpening(Pair pR0, int w, double d){
+        return (pR0.getX() > (w/2.0 - d/2.0)) && (pR0.getX() < (w/ 2.0 + d/2.0));
     }
 }
