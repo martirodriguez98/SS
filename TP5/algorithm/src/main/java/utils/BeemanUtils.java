@@ -156,7 +156,40 @@ public class BeemanUtils {
 
         //get neighbours
         Map<Particle, Set<Particle>> neighbours = CellIndexMethod.findNeighbours(grid, nextRs);
-        
+
+        //now correct predictions
+        while(prevRsIt.hasNext() && currRsIt.hasNext()){
+            Map.Entry<Particle, R> prev = prevRsIt.next();
+            Map.Entry<Particle, R> curr = currRsIt.next();
+
+            R nextR = new R();
+            R prevR = prev.getValue();
+            R currR = curr.getValue();
+            Particle p = prev.getKey();
+
+            //get current particle's neighbours
+            Set<Particle> pNeighbours = neighbours.get(p);
+            //find particle's acceleration
+            Pair predR2 = getAcc(p, pNeighbours, nextRs, d, w, gravity, kn, kt, wallR0, wallR1);
+
+            //correct velocity
+            double correctedR1X = currR.get(1).getX() + ((1/3.0) * predR2.getX() + (5/6.0) * currR.get(2).getX() - (1/6.0) * prevR.get(2).getX()) * dt;
+            double correctedR1Y = currR.get(1).getY() + ((1/3.0) * predR2.getY() + (5/6.0) * currR.get(2).getY() - (1/6.0) * prevR.get(2).getY()) * dt;
+
+            nextR.set(1, correctedR1X, correctedR1Y);
+        }
+
+        for(Particle p : currRs.keySet()){
+            R nextR = nextRs.get(p);
+            //get current particle's neighbours
+            Set<Particle> pNeighbours = neighbours.get(p);
+            //find particle's acceleration
+            Pair correctedR2 = getAcc(p, pNeighbours, nextRs, d, w, gravity, kn, kt, wallR0, wallR1);
+
+            nextR.set(2, correctedR2.getX(), correctedR2.getY());
+            nextRs.put(p, nextR);
+        }
+        return nextRs;
     }
 
     private static double wallVibrationR0(final double A, final double omega, final double t){
