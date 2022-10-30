@@ -13,8 +13,8 @@ public class Beeman {
 
 
     public static Results run(final Map<Particle, R> initialRs, final double finalTime,
-                              final double dt, final int l, final int w, final double A, final double gravity,
-                              final double kn, final double kt) {
+                              final double dt, final int l, final int w, final int d, final double A, final double gravity,
+                              final double kn, final double kt, final double omega) {
 
         getStartingAcc(initialRs, gravity);
         //todo save states
@@ -31,7 +31,7 @@ public class Beeman {
 
         for(double t = dt; t < finalTime; t+=dt){
 
-            Map<Particle, R> nextRs = getNextRs(); //todo ver que poner
+            Map<Particle, R> nextRs = getNextRs(grid, omega, t, dt, A, kn, kt, gravity, prevRs, currRs, w, d); //todo ver que poner
 
             Set<Particle> particlesLeavingNow = new HashSet<>();
             final Map<Particle, R> respawnedParticles = respawnParticles(currRs, particlesLeavingNow, particlesLeft, w, RESPAWN_MIN_H,RESPAWN_MAX_H,l/10.0); //todo hacer que se muevan

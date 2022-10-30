@@ -9,121 +9,70 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
+import static java.lang.Math.hypot;
+
 public class CellIndexMethod {
     final static String outputFilePath = "TP1/Algorithm/src/main/resources/Results/output.txt";
     final static String times_path = "TP1/Algorithm/src/main/resources/Results/times.txt";
     final static String timesBF = "TP1/Algorithm/src/main/resources/Results/timesBF.txt";
 
 
-    public static HashMap<Integer, Set<Particle>> cellIndexMethod(Map<Particle, R> particles, int L, int M, int N, int W) {
-        Grid grid = new Grid(particles, M, N, L, W);
+    public static void addNeighbourIfClose(Particle p, Map<Particle, R> particles, Cell currCell, Map<Particle, Set<Particle>> neighbours) {
 
-//        final AlgorithmTime algorithmTime = new AlgorithmTime();
+        Optional<Cell> UCell = Optional.ofNullable(currCell.getUCell());
+        Optional<Cell> URCell = Optional.ofNullable(currCell.getURCell());
+        Optional<Cell> RCell = Optional.ofNullable(currCell.getRCell());
+        Optional<Cell> BRCell = Optional.ofNullable(currCell.getBRCell());
 
-//        algorithmTime.setStart(LocalDateTime.now());
+        Pair pos = particles.get(p).get(0);
+        List<Optional<Cell>> neighbourCells = List.of(UCell, URCell, RCell, BRCell);
 
+        //check in own cell
+        for(Particle other : currCell.getParticles()){
+            Pair otherPos = particles.get(other).get(0);
+            if(!p.equals(other))
+                addIfTouching(p, other, pos, otherPos, neighbours);
+        }
+        //check in neighbouring cells
+        neighbourCells.stream().filter(cell -> cell.isPresent() && !cell.get().getParticles().isEmpty()).forEach(cell ->{
+            for(Particle other : cell.get().getParticles()){
+                Pair otherPos = particles.get(other).get(0);
+                addIfTouching(p, other, pos, otherPos, neighbours);
+            }
+        });
+    }
+
+    private static void addIfTouching(Particle p, Particle other, Pair pos, Pair otherPos, Map<Particle, Set<Particle>> neighbours){
+        double distX = pos.getX() - otherPos.getX();
+        double distY = pos.getY() - otherPos.getY();
+        double particleDistance = hypot(distX, distY) - p.getRadio() - other.getRadio();
+        //check if particles are touching each other
+        if(particleDistance <= 0.0){
+            neighbours.get(p).add(other);
+            neighbours.get(other).add(p);
+        }
+    }
+
+    public static Map<Particle,Set<Particle>> findNeighbours(Grid grid, Map<Particle, R> particles){
+        //set up grid
         List<List<Cell>> cells = grid.getGrid();
+        grid.emptyGrid();
 
-        HashMap<Integer, Set<Particle>> neighbours = new HashMap<>();
-        for (Particle p : particles.keySet()) {
-            neighbours.put(p.getId(), new HashSet<>());
+        Map<Particle, Set<Particle>> neighbours = new HashMap<>();
+        for(Map.Entry<Particle, R> e : particles.entrySet()){
+            neighbours.put(e.getKey(), new HashSet<>());
         }
-
-        for (int row = 0; row < M; row++) {
-            for (int col = 0; col < M; col++) {
-                final Cell thisCell = cells.get(row).get(col);
-                if (!thisCell.getParticles().isEmpty()) {
-                    for (Particle p : thisCell.getParticles()) {
-                        findNeighbours(thisCell, p, neighbours, particles, L, M);
+        for (int y=0; y<grid.getM(); y++) {
+            for (int x=0; x<grid.getN(); x++) {
+                final Cell currCell = cells.get(y).get(x);
+                if (!currCell.getParticles().isEmpty()) {
+                    for (Particle p : currCell.getParticles()) {
+                        addNeighbourIfClose(p, particles, currCell, neighbours);
                     }
                 }
             }
         }
-
-//        algorithmTime.setEnd(LocalDateTime.now());
-//        LocalTime totalTime = algorithmTime.getTotalTime();
-//        exportResults(neighbours);
-//        return totalTime.getNano() / 1000000;
         return neighbours;
-
-    }
-
-
-    public static void addNeighbourIfClose(Particle p1, Particle p2, Pair posP1, Pair posP2, HashMap<Integer, Set<Particle>> neighbours) {
-        double distance = Math.sqrt(Math.pow(posP1.getX() - posP2.getX(), 2) + Math.pow(posP1.getY() - posP2.getY(), 2));
-        if (distance - p1.getRadio() - p2.getRadio() <= 0) {
-            neighbours.get(p1.getId()).add(p2);
-            neighbours.get(p2.getId()).add(p1);
-        }
-    }
-
-    public static void findNeighbours(Cell cell, Particle p, HashMap<Integer, Set<Particle>> neighbours, Map<Particle, R> particles, int L, int M) {
-        final Pair position = particles.get(p).get(0);
-        final Cell UCell = cell.getUCell();
-        final Cell URCell = cell.getURCell();
-        final Cell BRCell = cell.getBRCell();
-        final Cell RCell = cell.getRCell();
-
-        //check inside cell
-        for (Particle otherP : cell.getParticles()) {
-            Pair otherPos = particles.get(otherP).get(0);
-            if (!p.equals(otherP)) {
-                addNeighbourIfClose(p, otherP, position, otherPos, neighbours);
-            }
-        }
-
-        if (UCell != null && !UCell.getParticles().isEmpty()) {
-            for (Particle otherP : UCell.getParticles()) {
-                Pair otherPos = particles.get(otherP).get(0);
-                if ( M != 1) { //if M==1 grid is only one cell
-                    if (otherPos.getY() < position.getY()) {
-                        otherPos = new Pair(otherPos.getX(), otherPos.getY() + L);
-                    }
-                }
-                addNeighbourIfClose(p, otherP, position, otherPos, neighbours);
-            }
-        }
-
-        if (URCell != null && !URCell.getParticles().isEmpty()) {
-            for (Particle otherP : URCell.getParticles()) {
-                Pair otherPos = particles.get(otherP).get(0);
-                if (M != 1) {
-                    if (otherPos.getY() < position.getY()) {
-                        otherPos = new Pair(otherPos.getX() + (otherPos.getX() < position.getX() ? L : 0), otherPos.getY() + L);
-                    } else if (otherPos.getX() < position.getX()) {
-                        otherPos = new Pair(otherPos.getX() + L, otherPos.getY());
-                    }
-                }
-                addNeighbourIfClose(p, otherP, position, otherPos, neighbours);
-            }
-        }
-
-        if (BRCell != null && !BRCell.getParticles().isEmpty()) {
-            for (Particle otherP : BRCell.getParticles()) {
-                Pair otherPos = particles.get(otherP).get(0);
-                if (M != 1) {
-                    if (otherPos.getY() > position.getY()) {
-                        otherPos = new Pair(otherPos.getX() + (otherPos.getX() < position.getX() ? L : 0), otherPos.getY() - L);
-                    } else if (otherPos.getX() < position.getX()) {
-                        otherPos = new Pair(otherPos.getX() + L, otherPos.getY());
-                    }
-                }
-                addNeighbourIfClose(p, otherP, position, otherPos, neighbours);
-            }
-        }
-
-        if (RCell != null && !RCell.getParticles().isEmpty()) {
-            for (Particle otherP : RCell.getParticles()) {
-                Pair otherPos = particles.get(otherP).get(0);
-                if (M != 1) {
-                    if (otherPos.getX() < position.getX()) {
-                        otherPos = new Pair(otherPos.getX() + L, otherPos.getY());
-                    }
-                }
-                addNeighbourIfClose(p, otherP, position, otherPos, neighbours);
-            }
-        }
-
     }
 
 }

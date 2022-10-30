@@ -38,6 +38,7 @@ public class Cell {
         this.BRCell = BRCell;
     }
 
+
     public List<Particle> getParticles() {
         return particles;
     }

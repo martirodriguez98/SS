@@ -32,6 +32,30 @@ public class Grid {
 
     }
 
+    public int getM() {
+        return m;
+    }
+
+    public int getN() {
+        return n;
+    }
+
+    public int getW() {
+        return w;
+    }
+
+    public int getL() {
+        return l;
+    }
+
+    public double getIncX() {
+        return incX;
+    }
+
+    public double getIncY() {
+        return incY;
+    }
+
     public void buildGrid(double incX, double incY) {
         double upperBorder = incY;
         double bottomBorder = 0;
@@ -104,5 +128,13 @@ public class Grid {
             best = (int) grid - 1;
         }
         return best;
+    }
+
+    public void emptyGrid(){
+        for (int y = 0; y < m; y++) {
+            for (int x = 0; x < n; x++) {
+                this.grid.get(y).get(x).getParticles().clear();
+            }
+        }
     }
 }
