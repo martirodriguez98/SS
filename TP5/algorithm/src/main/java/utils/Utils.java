@@ -1,9 +1,6 @@
 package utils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class Utils {
@@ -53,5 +50,21 @@ public class Utils {
 
     public static double randDouble(final Random randomGen, final double min, final double max) {
         return min + randomGen.nextDouble() * (max - min);
+    }
+
+    public static void exportStates(PrintWriter pw, Map<Particle,R> particles, double time){
+        pw.println(time);
+        for (Map.Entry<Particle,R> entry : particles.entrySet()){
+            R r = entry.getValue();
+            pw.println(entry.getKey().getId() + "," + r.get(0).getX() + "," +r.get(0).getY() + "," + r.get(1).getX() + "," + r.get(1).getY());
+        }
+    }
+
+    public static void exportStaticData(PrintWriter pw, Set<Particle> particles, int N){
+        pw.println(N);
+        for (Particle p : particles){
+            pw.println(p.getId() + "," + p.getRadio() + "," + p.getMass());
+        }
+
     }
 }

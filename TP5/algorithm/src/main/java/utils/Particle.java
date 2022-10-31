@@ -1,8 +1,6 @@
 package utils;
 
-import java.util.Collection;
 import java.util.Objects;
-import java.util.Random;
 
 public class Particle {
     private int id;

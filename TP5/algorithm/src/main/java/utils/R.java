@@ -7,6 +7,9 @@ public class R {
 
     public R(){
         this.ri = new ArrayList<>();
+        add(0,0);
+        add(0,0);
+        add(0,0);
     }
 
     public void add(final double x, final double y){

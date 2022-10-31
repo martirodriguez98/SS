@@ -3,6 +3,7 @@ package utils;
 import CellIndexMethod.CellIndexMethod;
 import CellIndexMethod.Grid;
 
+import java.io.PrintWriter;
 import java.util.*;
 
 import static java.lang.Math.cos;
@@ -256,4 +257,5 @@ public class BeemanUtils {
     private static boolean checkIfOpening(Pair pR0, int w, double d){
         return (pR0.getX() > (w/2.0 - d/2.0)) && (pR0.getX() < (w/ 2.0 + d/2.0));
     }
+
 }

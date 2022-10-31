@@ -2,7 +2,7 @@ package utils;
 
 public class Pair {
 
-    private final double x, y;
+    private double x, y;
 
     public Pair(double x, double y) {
         this.x = x;
@@ -15,5 +15,13 @@ public class Pair {
 
     public double getY() {
         return y;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
     }
 }
