@@ -29,8 +29,15 @@ public class SiloBeeman {
         int bestM = Grid.getBestGrid(l - (int)(RESPAWN_MAX_H-RESPAWN_MIN_H), maxRadius); //30 is the restriction given
         int bestN = Grid.getBestGrid(w, maxRadius);
         Grid grid = new Grid(initialRs, bestM, bestN, l - (int)(RESPAWN_MAX_H-RESPAWN_MIN_H), w);
-        for(double t = dt; t < finalTime; t+=dt){
-            exportStates(pw, currRs, t);
+
+        int exportIterationsStep = 1000;
+        int iters = 0;
+
+        for(double t = dt; t < finalTime; t+=dt, iters+=1){
+            if(iters % exportIterationsStep == 0) {
+                exportStates(pw, currRs, t);
+            }
+
             Map<Particle, R> nextRs = getNextRs(grid, omega, t, dt, A, kn, kt, gravity, prevRs, currRs, w, d); //todo ver que poner
 
             Set<Particle> particlesLeavingNow = new HashSet<>();

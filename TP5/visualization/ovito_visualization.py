@@ -1,3 +1,4 @@
+import math
 import numpy as np
 import pandas as pd
 from ovito.data import DataCollection, SimulationCell, Particles
@@ -5,12 +6,13 @@ from ovito.io import export_file
 from ovito.pipeline import StaticSource, Pipeline
 
 
-def _generate_opening(D,W,L):
-    opening_points = []
-    for y in np.arange(0, 0.04, 0.0005):
-        opening_points.append([W/2, y, 0])
-        opening_points.append([W/2, L-y, 0])
-    return np.array(opening_points)
+def _generate_opening(D,W,L, time):
+    vibration = 0.15 * math.sin(W * time)
+    left_wall = np.array([[0, y + vibration, 0] for y in np.arange(0, L, 0.5)])
+    right_wall = np.array([[W, y + vibration, 0] for y in np.arange(0, L, 0.5)])
+    bottom_wall_left = np.array([[x, vibration, 0] for x in np.arange(0, W / 2 - D / 2 + 0.5, 0.5)])
+    bottom_wall_right = np.array([[x, vibration, 0] for x in np.arange(W / 2 + D / 2, W + 0.5, 0.5)])
+    return np.concatenate((left_wall, right_wall, bottom_wall_left, bottom_wall_right))
 
 
 def export_to_ovito(static_file, dynamic_file, L,W, D,export_path):
@@ -33,12 +35,12 @@ def export_to_ovito(static_file, dynamic_file, L,W, D,export_path):
     # Apply a modifier:
     pipeline.modifiers.append(simulation_cell)
     export_file(pipeline, export_path, 'lammps/dump',
-                columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius", "angle", "Force.X", "Force.Y", "Force.Z"],
+                columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius", "Force.X", "Force.Y", "Force.Z","Wall"],
                 multiple_frames=True, start_frame=0, end_frame=len(data_frame) - 1)
 
 
 def get_particle_data(static_file, dynamic_file):
-    st_df = pd.read_csv(static_file, sep=" ", skiprows=1, names=["id","r", "mass"])
+    st_df = pd.read_csv(static_file, sep=",", skiprows=1, names=["id","r", "mass"])
 
     dynamic_df = []
     with open(dynamic_file, "r") as dynamic:
@@ -52,21 +54,22 @@ def get_particle_data(static_file, dynamic_file):
             if len(line_info) > 1:
                 dynamic_lines.append(line_info)
             elif len(line_info) == 1:
-                df = pd.DataFrame(np.array(dynamic_lines), columns=["id","x", "y", "vx", "vy"])
-                dynamic_df.append(pd.concat([df, st_df], axis=1))
+                df = pd.DataFrame(np.array(dynamic_lines), columns=["x", "y", "vx", "vy"])
+                dynamic_df.append([line_info[0],pd.concat([df, st_df], axis=1)])
                 dynamic_lines = []
-        df = pd.DataFrame(np.array(dynamic_lines), columns=["id","x", "y", "vx","vy"])
-        dynamic_df.append(pd.concat([df, st_df], axis=1))
+        df = pd.DataFrame(np.array(dynamic_lines), columns=["x", "y", "vx","vy"])
+        dynamic_df.append([line_info[0],pd.concat([df, st_df], axis=1)])
 
     return dynamic_df
 
 
 def get_particles(data_frame,D,W,L):
     particles = Particles()
-    opening_points = _generate_opening(D,W,L)
-    particles.create_property('Particle Identifier', data=np.concatenate((data_frame.id, np.arange(len(data_frame.x), len(data_frame.x) + len(opening_points)))))
-    particles.create_property("Position", data=np.concatenate((np.array((data_frame.x, data_frame.y, np.zeros(len(data_frame.x)))).T, opening_points)))
-    particles.create_property("Radius", data=data_frame.r)
-    particles.create_property("Force", data=np.array((np.cos(data_frame.theta) * data_frame.speed, np.sin(data_frame.theta) * data_frame.speed, np.zeros(len(data_frame.x)))).T)
+    opening_points = _generate_opening(D,W,L,data_frame[0])
+    particles.create_property('Particle Identifier', data=np.concatenate(((data_frame[1].id.values, np.full(len(opening_points), max(data_frame[1].id.values) +1)))))
+    particles.create_property("Position", data=np.concatenate((np.array((data_frame[1].x, data_frame[1].y, np.zeros(len(data_frame[1].x)))).T, opening_points)))
+    particles.create_property("Radius", data=np.concatenate((data_frame[1].r, np.full(len(opening_points), 0.2))))
+    particles.create_property("Force", data=np.concatenate((np.array((data_frame[1].vx, data_frame[1].vy, np.zeros(len(data_frame[1].x)))).T, np.zeros((len(opening_points),3)))))
+    particles.create_property('Wall', data=np.concatenate((np.full(len(data_frame[1].id),0.2), np.full(len(opening_points),0))))
     return particles
 

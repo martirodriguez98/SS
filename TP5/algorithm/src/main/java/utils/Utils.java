@@ -56,7 +56,7 @@ public class Utils {
         pw.println(time);
         for (Map.Entry<Particle,R> entry : particles.entrySet()){
             R r = entry.getValue();
-            pw.println(entry.getKey().getId() + "," + r.get(0).getX() + "," +r.get(0).getY() + "," + r.get(1).getX() + "," + r.get(1).getY());
+            pw.println(r.get(0).getX() + "," +r.get(0).getY() + "," + r.get(1).getX() + "," + r.get(1).getY());
         }
     }
 
