@@ -18,7 +18,6 @@ public class CellIndexMethod {
 
 
     public static void addNeighbourIfClose(Particle p, Map<Particle, R> particles, Cell currCell, Map<Particle, Set<Particle>> neighbours) {
-
         Optional<Cell> UCell = Optional.ofNullable(currCell.getUCell());
         Optional<Cell> URCell = Optional.ofNullable(currCell.getURCell());
         Optional<Cell> RCell = Optional.ofNullable(currCell.getRCell());
@@ -57,6 +56,7 @@ public class CellIndexMethod {
         //set up grid
         List<List<Cell>> cells = grid.getGrid();
         grid.emptyGrid();
+        grid.fillGrid(particles);
 
         Map<Particle, Set<Particle>> neighbours = new HashMap<>();
         for(Map.Entry<Particle, R> e : particles.entrySet()){

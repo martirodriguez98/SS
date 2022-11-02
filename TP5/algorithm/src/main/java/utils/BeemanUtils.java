@@ -22,7 +22,6 @@ public class BeemanUtils {
         Pair particleR1 = currRs.get(p).get(1);
 
         double fx=0, fy=0;
-
         // if it collides with other particles
         for(Particle particle : neighbours){
             R pR = currRs.get(particle);
@@ -86,6 +85,7 @@ public class BeemanUtils {
 
         //gravity
         fy -= p.getMass() * gravity;
+
         return new Pair(fx/p.getMass(), fy/p.getMass());
     }
 
@@ -128,6 +128,9 @@ public class BeemanUtils {
         Iterator<Map.Entry<Particle, R>> currRsIt = currRs.entrySet().iterator();
         Iterator<Map.Entry<Particle, R>> prevRsIt = prevRs.entrySet().iterator();
 
+        //get neighbours
+        Map<Particle, Set<Particle>> neighbours = CellIndexMethod.findNeighbours(grid, currRs);
+
         while(currRsIt.hasNext() && prevRsIt.hasNext()){
 
             Map.Entry<Particle, R> prev = prevRsIt.next();
@@ -139,8 +142,9 @@ public class BeemanUtils {
             Particle p = prev.getKey();
 
             //calculate next r0
-            double r0x = currR.get(0).getX() + currR.get(1).getX() * dt + ((2/3.0) * currR.get(2).getX() - (1/6.0) * prevR.get(2).getX())*dt*dt;
-            double r0y = currR.get(0).getY() + currR.get(1).getY() * dt + ((2/3.0) * currR.get(2).getY() - (1/6.0) * prevR.get(2).getY())*dt*dt;
+            double r0x = currR.get(0).getX() + currR.get(1).getX() * dt + ((2/3.0) * currR.get(2).getX() - (1/6.0) * prevR.get(2).getX()) * dt * dt;
+            double r0y = currR.get(0).getY() + currR.get(1).getY() * dt + ((2/3.0) * currR.get(2).getY() - (1/6.0) * prevR.get(2).getY()) * dt * dt;
+
             nextR.set(0, r0x, r0y);
 
             //predict velocity
@@ -154,9 +158,6 @@ public class BeemanUtils {
         //restart iterators
         currRsIt = currRs.entrySet().iterator();
         prevRsIt = prevRs.entrySet().iterator();
-
-        //get neighbours
-        Map<Particle, Set<Particle>> neighbours = CellIndexMethod.findNeighbours(grid, nextRs);
 
         //now correct predictions
         while(prevRsIt.hasNext() && currRsIt.hasNext()){
@@ -215,7 +216,8 @@ public class BeemanUtils {
             }
             //check if particle crossed treshold
             if(pos.getY() - particle.getRadio() < -respawnDist) {
-                R newR = Utils.generateState(particle, currRs, 0 + particle.getRadio(), w - particle.getRadio(), respawnMinH + particle.getRadio(), respawnMaxH - particle.getRadio()); //todo ponerle las cositas
+                double offset = new Random().nextDouble();
+                R newR = Utils.generateState(particle, currRs,  particle.getRadio() + offset, w - particle.getRadio() - offset, respawnMinH + particle.getRadio(), respawnMaxH - particle.getRadio() ); //todo ponerle las cositas
                 particlesLeft.remove(particle);
                 respawnedParticles.put(particle, newR);
             }
@@ -250,6 +252,7 @@ public class BeemanUtils {
 
             fx += fn * enX + ft * etX;
             fy += fn * enY + ft * etY;
+
         }
         return new Pair(fx, fy);
     }

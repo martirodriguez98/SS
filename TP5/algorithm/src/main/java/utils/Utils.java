@@ -10,9 +10,10 @@ public class Utils {
         int createdParticlesCount = 0;
         for (int i = 0; i < n; i++) {
             double radio = randDouble(new Random(), 0.85, 1.15);
+            double offset = new Random().nextDouble();
             Particle p = new Particle(createdParticlesCount, radio, mass);
             createdParticlesCount++;
-            R state = generateState(p, createdParticles, minX, maxX, minY, maxY);
+            R state = generateState(p, createdParticles, minX + radio + offset, maxX - radio - offset, minY + radio + offset, maxY - radio);
             createdParticles.put(p, state);
         }
 
@@ -20,6 +21,9 @@ public class Utils {
     }
 
     public static R generateState(Particle p, Map<Particle, R> particles, double minX, double maxX, double minY, double maxY) {
+        if(minX < 0 ){
+            System.out.println("minX: " + minX);
+        }
         Random randGen = new Random();
         boolean success = false;
         double x=0, y=0;

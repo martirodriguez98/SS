@@ -27,7 +27,6 @@ public class Grid {
         this.incY = this.l / (double) m;
         this.grid = new ArrayList<>();
         buildGrid(incX, incY);
-        fillGrid(particles, incX, incY);
         setNeighbours();
 
     }
@@ -66,7 +65,7 @@ public class Grid {
             rightBorder = leftBorder + incX;
             List<Cell> cells = new ArrayList<>();
             this.grid.add(row, cells);
-            for (int col = 0; col < this.m; col++) {
+            for (int col = 0; col < this.n; col++) {
                 this.grid.get(row).add(col, new Cell(row, col, upperBorder, bottomBorder, leftBorder, rightBorder));
                 rightBorder += incX;
                 leftBorder += incX;
@@ -76,13 +75,14 @@ public class Grid {
         }
     }
 
-    public void fillGrid(Map<Particle, R> particles, double incX, double incY) {
+    public void fillGrid(Map<Particle, R> particles) {
         for (Map.Entry<Particle, R> entry : particles.entrySet()) {
             Pair pos = entry.getValue().get(0);
 
             if (pos.getY() >= 0 && pos.getY() < l) {
-                final int row = (int) Math.floor(pos.getY() / incY);
-                final int col = (int) Math.floor(pos.getX() / incX);
+                final int row = (int) Math.floor(pos.getY() / getIncY());
+                final int col = (int) Math.floor(pos.getX() / getIncX());
+                System.out.println("x: " + pos.getX() + " - y: " + pos.getY() + ", row: " + row + " - col: " + col);
                 this.grid.get(row).get(col).addParticle(entry.getKey());
             }
 
