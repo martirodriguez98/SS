@@ -28,9 +28,9 @@ public class SiloBeeman {
         double maxRadius = initialRs.keySet().stream().map(Particle::getRadio).max(Double::compare).orElseThrow();
         int bestM = Grid.getBestGrid(l - (int)(RESPAWN_MAX_H-RESPAWN_MIN_H), maxRadius); //30 is the restriction given
         int bestN = Grid.getBestGrid(w, maxRadius);
-        Grid grid = new Grid(initialRs, bestM, bestN, l - (int)(RESPAWN_MAX_H-RESPAWN_MIN_H), w);
+        Grid grid = new Grid(bestM, bestN, l - (int)(RESPAWN_MAX_H-RESPAWN_MIN_H), w);
 
-        int exportIterationsStep = 1000;
+        int exportIterationsStep = 10;
         int iters = 0;
 
         for(double t = dt; t < finalTime; t+=dt, iters+=1){

@@ -18,7 +18,7 @@ public class Grid {
     private final double incX;
     private final double incY;
 
-    public Grid(Map<Particle, R> particles, int m, int n, int l, int w) {
+    public Grid(int m, int n, int l, int w) {
         this.m = m;
         this.l = l;
         this.w = w;
@@ -79,10 +79,9 @@ public class Grid {
         for (Map.Entry<Particle, R> entry : particles.entrySet()) {
             Pair pos = entry.getValue().get(0);
 
-            if (pos.getY() >= 0 && pos.getY() < l) {
+            if (pos.getY() >= 0 && pos.getY() < l && pos.getX() > 0 && pos.getX() < w) {
                 final int row = (int) Math.floor(pos.getY() / getIncY());
-                final int col = (int) Math.floor(pos.getX() / getIncX());
-                System.out.println("x: " + pos.getX() + " - y: " + pos.getY() + ", row: " + row + " - col: " + col);
+                int col = (int) Math.floor(pos.getX() / getIncX());
                 this.grid.get(row).get(col).addParticle(entry.getKey());
             }
 

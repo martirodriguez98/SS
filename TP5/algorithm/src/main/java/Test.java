@@ -23,7 +23,7 @@ public class Test {
         double maxX = 20;
         double minY = 0;
         double maxY = 70;
-        double finalTime = 1000;
+        double finalTime = 60;
         double dt = 0.001;
         int d = 3;
         double A = 0.15;

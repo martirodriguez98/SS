@@ -35,6 +35,7 @@ public class BeemanUtils {
         // if it collides with a wall
         //bottom wall
         if(particleR0.getY() <= p.getRadio()){
+
             //is the particle inside the opening?
             if(checkIfOpening(particleR0, w ,d)){
                 //right side of opening
@@ -54,10 +55,10 @@ public class BeemanUtils {
             }
             else{
                 R bottomWallR = new R();
-                bottomWallR.set(0, particleR0.getX(), wallR0);
+                bottomWallR.set(0, particleR0.getX(), wallR0 - p.getRadio());
                 bottomWallR.set(1, 0, wallR1);
-                Pair bottomWallForce = calculateCollisionForce(p, null, particleR0, particleR1, bottomWallR.get(0), bottomWallR.get(1), kn, kt);
-
+                Particle p2 = new Particle(-1, p.getRadio(), 1 );
+                Pair bottomWallForce = calculateCollisionForce(p, p2, particleR0, particleR1, bottomWallR.get(0), bottomWallR.get(1), kn, kt);
                 fx += bottomWallForce.getX();
                 fy += bottomWallForce.getY();
             }
@@ -66,9 +67,10 @@ public class BeemanUtils {
         //left wall
         if(particleR0.getX() <= p.getRadio()){
             R lWall = new R();
-            lWall.set(0, 0, particleR0.getY());
+            lWall.set(0, -p.getRadio(), particleR0.getY());
             lWall.set(1, 0, wallR1);
-            Pair force = calculateCollisionForce(p, null, particleR0, particleR1, lWall.get(0), lWall.get(1), kn, kt);
+            Particle p2 = new Particle(-1, p.getRadio(), 1 );
+            Pair force = calculateCollisionForce(p, p2, particleR0, particleR1, lWall.get(0), lWall.get(1), kn, kt);
             fx += force.getX();
             fy += force.getY();
         }
@@ -76,16 +78,15 @@ public class BeemanUtils {
         //right wall
         if(particleR0.getX() + p.getRadio() >= w){
             R rWall = new R();
-            rWall.set(0, w, particleR0.getY());
+            rWall.set(0, w + p.getRadio(), particleR0.getY());
             rWall.set(1, 0, wallR1);
-            Pair force = calculateCollisionForce(p, null, particleR0, particleR1, rWall.get(0), rWall.get(1), kn, kt);
+            Particle p2 = new Particle(-1, p.getRadio(), 1 );
+            Pair force = calculateCollisionForce(p, p2, particleR0, particleR1, rWall.get(0), rWall.get(1), kn, kt);
             fx += force.getX();
             fy += force.getY();
         }
-
         //gravity
         fy -= p.getMass() * gravity;
-
         return new Pair(fx/p.getMass(), fy/p.getMass());
     }
 
@@ -128,8 +129,7 @@ public class BeemanUtils {
         Iterator<Map.Entry<Particle, R>> currRsIt = currRs.entrySet().iterator();
         Iterator<Map.Entry<Particle, R>> prevRsIt = prevRs.entrySet().iterator();
 
-        //get neighbours
-        Map<Particle, Set<Particle>> neighbours = CellIndexMethod.findNeighbours(grid, currRs);
+
 
         while(currRsIt.hasNext() && prevRsIt.hasNext()){
 
@@ -155,6 +155,9 @@ public class BeemanUtils {
             nextRs.put(p, nextR);
         }
 
+        //get neighbours
+        Map<Particle, Set<Particle>> neighbours = CellIndexMethod.findNeighbours(grid, nextRs);
+
         //restart iterators
         currRsIt = currRs.entrySet().iterator();
         prevRsIt = prevRs.entrySet().iterator();
@@ -164,20 +167,19 @@ public class BeemanUtils {
             Map.Entry<Particle, R> prev = prevRsIt.next();
             Map.Entry<Particle, R> curr = currRsIt.next();
 
-            R nextR = new R();
+
             R prevR = prev.getValue();
             R currR = curr.getValue();
             Particle p = prev.getKey();
+            R nextR = nextRs.get(p);
 
             //get current particle's neighbours
             Set<Particle> pNeighbours = neighbours.get(p);
             //find particle's acceleration
             Pair predR2 = getAcc(p, pNeighbours, nextRs, d, w, gravity, kn, kt, wallR0, wallR1);
-
             //correct velocity
             double correctedR1X = currR.get(1).getX() + ((1/3.0) * predR2.getX() + (5/6.0) * currR.get(2).getX() - (1/6.0) * prevR.get(2).getX()) * dt;
             double correctedR1Y = currR.get(1).getY() + ((1/3.0) * predR2.getY() + (5/6.0) * currR.get(2).getY() - (1/6.0) * prevR.get(2).getY()) * dt;
-
             nextR.set(1, correctedR1X, correctedR1Y);
         }
 
@@ -236,6 +238,7 @@ public class BeemanUtils {
 
         //use particle collision force equations
         if(touching >= 0){
+
             //normal
             double enX = dR0X / dist;
             double enY = dR0Y / dist;
@@ -252,13 +255,12 @@ public class BeemanUtils {
 
             fx += fn * enX + ft * etX;
             fy += fn * enY + ft * etY;
-
         }
         return new Pair(fx, fy);
     }
 
     private static boolean checkIfOpening(Pair pR0, int w, double d){
-        return (pR0.getX() > (w/2.0 - d/2.0)) && (pR0.getX() < (w/ 2.0 + d/2.0));
+        return pR0.getX() > (w/2.0 - d/2.0) && pR0.getX() < (w/ 2.0 + d/2.0);
     }
 
 }
