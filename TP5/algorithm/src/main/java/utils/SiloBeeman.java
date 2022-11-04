@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 import static utils.BeemanUtils.*;
+import static utils.Utils.exportFlow;
 import static utils.Utils.exportStates;
 
 public class SiloBeeman {
@@ -16,7 +17,7 @@ public class SiloBeeman {
 
     public static void run(final Map<Particle, R> initialRs, final double finalTime,
                               final double dt, final int l, final int w, final int d, final double A, final double gravity,
-                              final double kn, final double kt, final double omega, PrintWriter pw) {
+                              final double kn, final double kt, final double omega, PrintWriter pw, PrintWriter pwFlow) {
 
         getStartingAcc(initialRs, gravity);
 
@@ -30,7 +31,7 @@ public class SiloBeeman {
         int bestN = Grid.getBestGrid(w, maxRadius);
         Grid grid = new Grid(bestM, bestN, l - (int)(RESPAWN_MAX_H-RESPAWN_MIN_H), w);
 
-        int exportIterationsStep = 10;
+        int exportIterationsStep = 100;
         int iters = 0;
 
         for(double t = dt; t < finalTime; t+=dt, iters+=1){
@@ -46,7 +47,15 @@ public class SiloBeeman {
 
             nextRs.putAll(respawnedParticles);
 
+            if (particlesLeavingNow.size() != 0){
+                exportFlow(t, pwFlow);
+            }
             //todo compute caudal
+            /*
+            ventanas de 10/20 particulas para el error
+             */
+
+
 
             prevRs = currRs;
             prevRs.putAll(euler(respawnedParticles, -dt, gravity));

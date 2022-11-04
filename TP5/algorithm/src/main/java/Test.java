@@ -23,18 +23,20 @@ public class Test {
         double maxX = 20;
         double minY = 0;
         double maxY = 70;
-        double finalTime = 60;
+        double finalTime = 500;
         double dt = 0.001;
         int d = 3;
         double A = 0.15;
         //todo despues se varia el omega
-        double omega = 5;
+        double omega = 15;
         double gravity = 5;
         double kn =250;
         double kt =2*kn;
 
         String staticFile = "static.txt";
         String dynamicFile = "dynamic.txt";
+        String flowFile = "flow.txt";
+
         Map<Particle, R> initialParticles = generateParticles(n, mass, L, W, minX, maxX,minY,maxY);
 
         try(PrintWriter pw = new PrintWriter(staticFile)){
@@ -44,7 +46,9 @@ public class Test {
         }
 
         try(PrintWriter pw = new PrintWriter(dynamicFile)){
-            SiloBeeman.run(initialParticles, finalTime, dt, L, W, d, A, gravity, kn, kt, omega,pw );
+            try(PrintWriter pwFlow = new PrintWriter(flowFile)){
+                SiloBeeman.run(initialParticles, finalTime, dt, L, W, d, A, gravity, kn, kt, omega,pw,pwFlow );
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

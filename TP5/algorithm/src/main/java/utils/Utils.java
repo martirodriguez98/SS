@@ -71,4 +71,8 @@ public class Utils {
         }
 
     }
+
+    public static void exportFlow(double t, PrintWriter pw){
+        pw.println(t);
+    }
 }
