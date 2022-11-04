@@ -14,3 +14,26 @@ def plot_data(x, y, title, x_title, y_title):
         )
     )
     fig.show()
+
+def plot_many_data(x,y,legends,title,x_title,y_title,legend):
+    data = []
+    for i in range(len(x)):
+        data.append(go.Scatter(
+            x=x[i],
+            y=y[i],
+            name=f'{legends[i]}',
+            mode='lines+markers',
+        )),
+
+    fig = go.Figure(
+        data=data,
+        layout=go.Layout(
+            title=dict(text=f'{title}'),
+            xaxis=dict(title=f'{x_title}'),
+            yaxis=dict(title=f'{y_title}'),
+            legend=dict(title=f'{legend}'),
+            font=dict(size=22)
+        ),
+    )
+
+    fig.show()
