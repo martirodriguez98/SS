@@ -2,7 +2,7 @@ from ovito_visualization import export_to_ovito
 import pandas as pd
 import numpy as np
 
-from plots import plot_data, plot_many_data, plot_error
+from plots import plot_data, plot_many_data, plot_error, plot_beverloo
 
 
 def ejA():
@@ -82,10 +82,50 @@ def manyD():
         plot_data(n_s[i], actual_flow, f'Q vs N for d = {d}', "N", "Q (partículas/s)")
 
     plot_many_data(n_s,all_flows,d_s,"Q vs N", "N","Q (partículas/s)","D (cm)")
+    plot_error(d_s,mean,std_dev,"Q error for different d","D (cm)","Q (partículas/s)")
+
 
 def c():
-    
+
+    flow_df = []
+    window = 10
+    mean = []
+    d_s = [3,4,5,6]
+    L = 30
+    W = 20
+    c = 2.99
+    beverloo = []
+    for i,d in enumerate(d_s):
+        file = f'flow_w20_{d}.txt'
+        flow_df.append(pd.read_csv(file, names=["t"]))
+        flow_times = flow_df[i]["t"].tolist()
+        actual_flow = []
+        for j in range(len(flow_times) - window):
+            actual_flow.append(window / (flow_times[j + window - 1] - flow_times[j]))
+
+        mean.append(np.mean(actual_flow))
+        beverloo.append((200/(L*W))*np.sqrt(5)*np.power(d - c,1.5))
+
+    plot_beverloo(d_s, mean, beverloo, "Beverloo", "D (cm)", "Q (partículas/s)")
+
+def generate_ovito_files():
+    static_file = "static_w_20.0.txt"
+    dynamic_file = "dynamic_w_20.0.txt"
+    L = 70
+    W = 20
+    D = 3
+    export_to_ovito(static_file, dynamic_file, L, W, D, "ovito_w_20.dump")
+    static_file = "static_w_5.0.txt"
+    dynamic_file = "dynamic_w_5.0.txt"
+    export_to_ovito(static_file, dynamic_file, L, W, D, "ovito_w_5.dump")
+    static_file = "static_d_6.txt"
+    dynamic_file = "dynamic_d_6.txt"
+    D = 6
+    export_to_ovito(static_file, dynamic_file, L, W, D, "ovito_d_6.dump")
+
 
 if __name__ == '__main__':
     # manyW()
-    manyD()
+    # manyD()
+    # c()
+    generate_ovito_files()

@@ -53,3 +53,28 @@ def plot_error(w_s, flows, std_dev, title, x_title, y_title):
         )
     )
     fig.show()
+
+def plot_beverloo(d_s, mean, beverloo, title, x_title, y_title):
+    data = []
+    data.append(go.Scatter(
+        x = d_s,
+        y = mean,
+        mode='markers',
+        name='Algoritmo'
+    ))
+    data.append(go.Scatter(
+        x = d_s,
+        y = beverloo,
+        mode='lines',
+        name='Beverloo'
+
+    ))
+    fig = go.Figure(
+        data=data,
+        layout=go.Layout(
+            title=dict(text=title),
+            xaxis=dict(title=x_title),
+            yaxis=dict(title=y_title),
+        )
+    )
+    fig.show()
