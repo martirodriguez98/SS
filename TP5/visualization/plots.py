@@ -37,3 +37,19 @@ def plot_many_data(x,y,legends,title,x_title,y_title,legend):
     )
 
     fig.show()
+
+def plot_error(w_s, flows, std_dev, title, x_title, y_title):
+    fig = go.Figure(
+        data=go.Scatter(
+            x=w_s,
+            y=flows,
+            error_y=dict(array=std_dev)
+        ),
+        layout=go.Layout(
+            title=dict(text=f'{title}'),
+            xaxis=dict(title=f'{x_title}'),
+            yaxis=dict(title=f'{y_title}'),
+            font=dict(size=22)
+        )
+    )
+    fig.show()

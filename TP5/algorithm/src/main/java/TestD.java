@@ -21,11 +21,11 @@ public class TestD {
         double maxX = 20;
         double minY = 0;
         double maxY = 70;
-        double finalTime = 500;
+        double finalTime = 1000;
         double dt = 0.001;
         double A = 0.15;
         double omega = 15; //todo usar el optimo
-        List<Integer> ds = Arrays.asList(3,4,5,6);
+        List<Integer> ds = Arrays.asList(4,5,6);
         double gravity = 5;
         double kn =250;
         double kt =2*kn;
@@ -35,7 +35,7 @@ public class TestD {
         for (Integer d : ds){
             String staticFile = "static_d_" + d +".txt";
             String dynamicFile = "dynamic_d_" + d + ".txt";
-            String flowFile = "flow_" + d+ ".txt";
+            String flowFile = "flow_w20_" + d+ ".txt";
 
             try(PrintWriter pw = new PrintWriter(staticFile)){
                 exportStaticData(pw, initialParticles.keySet(), n);

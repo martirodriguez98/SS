@@ -21,12 +21,12 @@ public class TestW {
         double maxX = 20;
         double minY = 0;
         double maxY = 70;
-        double finalTime = 500;
+        double finalTime = 1000;
         double dt = 0.001;
         int d = 3;
         double A = 0.15;
         //todo despues se varia el omega
-        List<Double> omegas = Arrays.asList(5.0,10.0,15.0,20.0,30.0,50.0);
+        List<Double> omegas = List.of(20.0);
         double gravity = 5;
         double kn =250;
         double kt =2*kn;

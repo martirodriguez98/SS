@@ -2,7 +2,7 @@ from ovito_visualization import export_to_ovito
 import pandas as pd
 import numpy as np
 
-from plots import plot_data, plot_many_data
+from plots import plot_data, plot_many_data, plot_error
 
 
 def ejA():
@@ -36,9 +36,9 @@ def manyW():
     flow_df = []
     all_flows = []
     window = 5
-    max = 1
     n_s = []
     std_dev = []
+    mean = []
     for i,w in enumerate(w_s):
         file = f'flow_{w}.txt'
         flow_df.append(pd.read_csv(file, names=["t"]))
@@ -50,16 +50,42 @@ def manyW():
         all_flows.append(actual_flow)
         n_s.append(np.arange(window,len(actual_flow)+window,1))
         std_dev.append(np.std(actual_flow))
+        mean.append(np.mean(actual_flow))
         #This plots singular plot for every w
-        # plot_data(n_s[i], actual_flow, f'Q vs N for w = {w_text[i]}', "N", "Q")
+        plot_data(n_s[i], actual_flow, f'Q vs N for w = {w_text[i]}', "N", "Q (partículas/s)")
 
-    plot_many_data(n_s[:3],all_flows[:3],w_text[:3],"Q vs N", "N","Q","W")
-    plot_many_data(n_s[3:],all_flows[3:],w_text[3:],"Q vs N", "N","Q","W")
+    # plot_many_data(n_s[:3],all_flows[:3],w_text[:3],"Q vs N", "N","Q (partículas/s)","W (Hz)")
+    # plot_many_data(n_s[3:],all_flows[3:],w_text[3:],"Q vs N", "N","Q (partículas/s)","W (Hz)")
 
-    plot_data(w_text,std_dev,"Q error for different w","w","error")
+    # plot_error(w_text,mean,std_dev,"Q error for different w","W (Hz)","Q (partículas/s)")
+def manyD():
+    d_s = [3,4,5,6]
+    flow_df = []
+    all_flows = []
+    window = 10
+    n_s = []
+    std_dev = []
+    mean = []
+    for i,d in enumerate(d_s):
+        file = f'flow_w20_{d}.txt'
+        flow_df.append(pd.read_csv(file, names=["t"]))
+        flow_times = flow_df[i]["t"].tolist()
+        actual_flow = []
+        for j in range(len(flow_times) - window):
+            actual_flow.append(window / (flow_times[j + window - 1] - flow_times[j]))
 
+        all_flows.append(actual_flow)
+        n_s.append(np.arange(window,len(actual_flow)+window,1))
+        std_dev.append(np.std(actual_flow))
+        mean.append(np.mean(actual_flow))
+        #This plots singular plot for every w
+        plot_data(n_s[i], actual_flow, f'Q vs N for d = {d}', "N", "Q (partículas/s)")
 
+    plot_many_data(n_s,all_flows,d_s,"Q vs N", "N","Q (partículas/s)","D (cm)")
 
+def c():
+    
 
 if __name__ == '__main__':
-    manyW()
+    # manyW()
+    manyD()
